@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "666013841643",
+    "project_id": "roommade-34b05",
+    "storage_bucket": "roommade-34b05.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666013841643:android:e3e24dbd947388903826ae",
+        "android_client_info": {
+          "package_name": "com.example.roommade"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "666013841643-qc4kgsunpco3kgf6bt2tk5ibb2s88erh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.roommade",
+            "certificate_hash": "0a40c4040ede8c52df2d00269a26c148df2b589e"
+          }
+        },
+        {
+          "client_id": "666013841643-86r07d2i14d8fpi9viog1lvm0uc0c9sv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8FbTVl_elcokuiQQeUAYpcalHB1Im4zk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "666013841643-86r07d2i14d8fpi9viog1lvm0uc0c9sv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
