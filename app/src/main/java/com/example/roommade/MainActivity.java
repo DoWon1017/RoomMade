@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         findViewById(R.id.logout).setOnClickListener(view -> logout());
+
+
     }
 
     private void googleLogin() {
