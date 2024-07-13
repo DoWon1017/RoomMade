@@ -14,25 +14,6 @@
         app:layout_constraintTop_toBottomOf="@+id/frameLayout2">
 
         <LinearLayout
-            android:id="@+id/check_layout"
-            android:layout_width="138dp"
-            android:layout_height="130dp"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/check"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:srcCompat="@mipmap/ic_compliance_foreground" />
-
-            <TextView
-                android:id="@+id/check_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="           합격 확인" />
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/apply_layout"
             android:layout_width="136dp"
             android:layout_height="130dp"
@@ -69,6 +50,26 @@
                 android:layout_height="wrap_content"
                 android:text="        룸메이트 평점" />
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/check_layout"
+            android:layout_width="138dp"
+            android:layout_height="130dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/check"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@mipmap/ic_compliance_foreground" />
+
+            <TextView
+                android:id="@+id/check_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="           합격 확인" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <FrameLayout
