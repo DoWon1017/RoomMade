@@ -1,5 +1,7 @@
 package com.example.roommade;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +11,29 @@ import androidx.fragment.app.Fragment;
 
 public class FragmentMypage extends Fragment {
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_mypage, container, false);
+        View view = inflater.inflate(R.layout.fragment_mypage, container, false);
+
+        // 이미지 클릭 리스너 설정
+        view.findViewById(R.id.check).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ActivityA.class);
+            startActivity(intent);
+        });
+
+        view.findViewById(R.id.score).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ActivityB.class);
+            startActivity(intent);
+        });
+
+        view.findViewById(R.id.community).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ActivityC.class);
+            startActivity(intent);
+        });
+
+        return view;
     }
 }

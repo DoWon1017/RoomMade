@@ -21,6 +21,10 @@
         <activity android:name=".FragmentHome"/>
         <activity android:name=".FragmentCommunity"/>
         <activity android:name=".FragmentMypage"/>
+        <activity android:name=".ActivityA" />
+        <activity android:name=".ActivityB" />
+        <activity android:name=".ActivityC" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
