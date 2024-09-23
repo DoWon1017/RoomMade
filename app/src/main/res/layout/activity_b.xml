@@ -1,103 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <!-- 여기에 UI 구성 요소를 추가하세요 -->
-
-    <EditText
-        android:id="@+id/editTextText3"
-        android:layout_width="151dp"
-        android:layout_height="56dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="512dp"
-        android:layout_marginEnd="117dp"
-        android:ems="10"
-        android:inputType="text"
-        android:text="점수입력"
-        android:textAlignment="center"
-        android:textSize="20sp" />
-
+    <!-- 상벌점 확인 -->
     <TextView
-        android:id="@+id/textView9"
-        android:layout_width="124dp"
-        android:layout_height="73dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="11dp"
-        android:layout_marginTop="510dp"
-        android:text="벌점"
-        android:textAlignment="center"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/textViewB"
-        android:layout_width="match_parent"
-        android:layout_height="105dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="92dp"
-        android:layout_marginEnd="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="상벌점 확인"
-        android:textAlignment="center"
-        android:textSize="34sp" />
+        android:textSize="24sp"
+        android:layout_gravity="center"
+        android:paddingBottom="16dp" />
 
+    <!-- 상점 입력 영역 -->
     <TextView
-        android:id="@+id/textView8"
-        android:layout_width="124dp"
-        android:layout_height="73dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="326dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="상점"
-        android:textAlignment="center"
-        android:textSize="30sp" />
+        android:textSize="18sp" />
 
     <EditText
-        android:id="@+id/editTextText"
-        android:layout_width="151dp"
-        android:layout_height="56dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="326dp"
-        android:layout_marginEnd="117dp"
-        android:ems="10"
-        android:inputType="text"
-        android:text="점수입력"
-        android:textAlignment="center"
-        android:textSize="20sp" />
+        android:id="@+id/scoreInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="점수 입력" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/submitScoreButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="326dp"
-        android:layout_marginEnd="16dp"
         android:text="기입" />
 
-    <Button
-        android:id="@+id/button3"
+    <!-- 벌점 입력 영역 -->
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="512dp"
-        android:layout_marginEnd="21dp"
-        android:text="기입" />
+        android:text="벌점"
+        android:textSize="18sp"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/punishmentInput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="점수 입력" />
 
     <Button
-        android:id="@+id/button4"
-        android:layout_width="148dp"
-        android:layout_height="95dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="133dp"
-        android:layout_marginBottom="105dp"
+        android:id="@+id/submitPunishmentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="기입" />
+
+    <!-- 상벌점 점수 조회 버튼 -->
+    <Button
+        android:id="@+id/checkScoreButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="상벌점 점수 조회"
-        android:textSize="20sp" />
-
-</RelativeLayout>
+        android:layout_marginTop="24dp" />
+</LinearLayout>
