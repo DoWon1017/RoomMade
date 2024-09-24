@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.fragment.app.Fragment;
 
@@ -18,18 +19,20 @@ public class FragmentMypage extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_mypage, container, false);
 
+
+
         // 이미지 클릭 리스너 설정
-        view.findViewById(R.id.check).setOnClickListener(v -> {
+        view.findViewById(R.id.infoButton).setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ActivityA.class);
             startActivity(intent);
         });
 
-        view.findViewById(R.id.score).setOnClickListener(v -> {
+        view.findViewById(R.id.penaltyButton).setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ActivityB.class);
             startActivity(intent);
         });
 
-        view.findViewById(R.id.community).setOnClickListener(v -> {
+        view.findViewById(R.id.communityButton).setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), ActivityC.class);
             startActivity(intent);
         });
