@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:background="#FFFFFF"
-    tools:context=".InfoInputActivity"
+    tools:context=".MainActivity"
     android:padding="16dp">
 
     <!-- 상단 타이틀 텍스트 -->
@@ -28,7 +28,6 @@
         android:orientation="horizontal"
         android:layout_marginBottom="10dp">
 
-        <!-- 한글 레이블 -->
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -38,7 +37,6 @@
             android:textColor="#333333"
             android:gravity="center_vertical" />
 
-        <!-- 정보 입력칸 -->
         <EditText
             android:id="@+id/nameInput"
             android:layout_width="0dp"
@@ -204,6 +202,19 @@
         android:backgroundTint="#9933CC"
         android:padding="10dp"
         android:layout_marginTop="20dp"
+        android:layout_gravity="center" />
+
+    <!-- 뒤로가기 버튼 -->
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="뒤로가기"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#9933CC"
+        android:padding="10dp"
+        android:layout_marginTop="10dp"
         android:layout_gravity="center" />
 
 </LinearLayout>

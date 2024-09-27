@@ -3,63 +3,133 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:gravity="center"
+    android:background="#FFFFFF"
     android:padding="16dp">
 
-    <!-- 상벌점 확인 -->
+    <!-- 상벌점 확인 타이틀 -->
     <TextView
+        android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="상벌점 확인"
-        android:textSize="24sp"
-        android:layout_gravity="center"
-        android:paddingBottom="16dp" />
+        android:textSize="20sp"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:layout_marginBottom="30dp"
+        android:layout_gravity="center" />
 
-    <!-- 상점 입력 영역 -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="상점"
-        android:textSize="18sp" />
-
-    <EditText
-        android:id="@+id/scoreInput"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="점수 입력" />
-
-    <Button
-        android:id="@+id/submitScoreButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="기입" />
-
-    <!-- 벌점 입력 영역 -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="벌점"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp" />
-
-    <EditText
-        android:id="@+id/punishmentInput"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="점수 입력" />
-
-    <Button
-        android:id="@+id/submitPunishmentButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="기입" />
-
-    <!-- 상벌점 점수 조회 버튼 -->
-    <Button
-        android:id="@+id/checkScoreButton"
+    <!-- 상점 입력 섹션 -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="20dp">
+
+        <!-- 상점 텍스트 -->
+        <TextView
+            android:id="@+id/meritText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="상점"
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:gravity="center_vertical"
+            android:layout_marginEnd="16dp" />
+
+        <!-- 점수 입력 필드 -->
+        <EditText
+            android:id="@+id/meritInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="점수입력"
+            android:backgroundTint="#9933CC"
+            android:inputType="number"
+            android:gravity="center"
+            android:padding="10dp"
+            android:layout_marginEnd="16dp" />
+
+        <!-- 기입 버튼 -->
+        <Button
+            android:id="@+id/meritSubmitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="기입"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:backgroundTint="#9933CC"
+            android:padding="10dp" />
+    </LinearLayout>
+
+    <!-- 벌점 입력 섹션 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="40dp">
+
+        <!-- 벌점 텍스트 -->
+        <TextView
+            android:id="@+id/demeritText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="벌점"
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:gravity="center_vertical"
+            android:layout_marginEnd="16dp" />
+
+        <!-- 점수 입력 필드 -->
+        <EditText
+            android:id="@+id/demeritInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="점수입력"
+            android:backgroundTint="#9933CC"
+            android:inputType="number"
+            android:gravity="center"
+            android:padding="10dp"
+            android:layout_marginEnd="16dp" />
+
+        <!-- 기입 버튼 -->
+        <Button
+            android:id="@+id/demeritSubmitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="기입"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:backgroundTint="#9933CC"
+            android:padding="10dp" />
+    </LinearLayout>
+
+    <!-- 상벌점 조회 버튼 -->
+    <Button
+        android:id="@+id/viewScoreButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="상벌점 점수 조회"
-        android:layout_marginTop="24dp" />
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:backgroundTint="#9933CC"
+        android:padding="10dp"
+        android:layout_gravity="center" />
+    <!-- 뒤로가기 버튼 -->
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="뒤로가기"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#9933CC"
+        android:padding="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center" />
+
 </LinearLayout>
+

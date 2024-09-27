@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private final int GOOGLE_LOGIN_CODE = 9001;
     private final String ALLOWED_DOMAIN = "hs.ac.kr"; // 허용된 도메인
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,7 +105,9 @@ public class MainActivity extends AppCompatActivity {
                 // 로그아웃 후 로그인 화면으로 이동
                 startActivity(new Intent(MainActivity.this, MainActivity.class));
                 finish();
+
             }
+
         });
     }
 

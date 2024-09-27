@@ -1,79 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#FFFFFF"
+    android:padding="16dp">
 
-    <!-- 여기에 UI 구성 요소를 추가하세요 -->
-
+    <!-- 커뮤니티 타이틀 -->
     <TextView
-        android:id="@+id/textView12"
+        android:id="@+id/communityTitle"
         android:layout_width="wrap_content"
-        android:layout_height="69dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="112dp"
-        android:layout_marginTop="190dp"
-        android:text="배달음식 게시판"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/textView11"
-        android:layout_width="wrap_content"
-        android:layout_height="69dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="138dp"
-        android:layout_marginTop="406dp"
-        android:text="운동 게시판"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/textViewC"
-        android:layout_width="match_parent"
-        android:layout_height="122dp"
+        android:layout_height="wrap_content"
         android:text="커뮤니티에 작성한 글"
-        android:textAlignment="center"
-        android:textSize="34sp" />
+        android:textSize="20sp"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:layout_marginBottom="30dp"
+        android:layout_gravity="center" />
 
-    <TextView
-        android:id="@+id/textView10"
-        android:layout_width="wrap_content"
-        android:layout_height="69dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="157dp"
-        android:layout_marginTop="604dp"
-        android:text="커뮤니티"
-        android:textSize="30sp" />
+    <!-- 배달음식 게시판 섹션 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp">
 
+        <!-- 게시판 이름 -->
+        <TextView
+            android:id="@+id/deliveryBoardTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="배달음식 게시판"
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:gravity="center_vertical" />
+
+        <!-- 조회하기 버튼 -->
+        <Button
+            android:id="@+id/deliveryBoardButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="조회하기"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:backgroundTint="#9933CC"
+            android:padding="10dp"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+    <!-- 운동 게시판 섹션 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp">
+
+        <!-- 게시판 이름 -->
+        <TextView
+            android:id="@+id/sportsBoardTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="운동 게시판"
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:gravity="center_vertical" />
+
+        <!-- 조회하기 버튼 -->
+        <Button
+            android:id="@+id/sportsBoardButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="조회하기"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:backgroundTint="#9933CC"
+            android:padding="10dp"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+    <!-- 커뮤니티 게시판 섹션 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp">
+
+        <!-- 게시판 이름 -->
+        <TextView
+            android:id="@+id/communityBoardTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="커뮤니티"
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:gravity="center_vertical" />
+
+        <!-- 조회하기 버튼 -->
+        <Button
+            android:id="@+id/communityBoardButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="조회하기"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:backgroundTint="#9933CC"
+            android:padding="10dp"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+    <!-- 뒤로가기 버튼 -->
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="507dp"
-        android:layout_marginEnd="149dp"
-        android:text="조회하기" />
+        android:text="뒤로가기"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#9933CC"
+        android:padding="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center" />
 
-    <Button
-        android:id="@+id/button6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="307dp"
-        android:layout_marginEnd="148dp"
-        android:text="조회하기" />
+</LinearLayout>
 
-    <Button
-        android:id="@+id/button7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="703dp"
-        android:layout_marginEnd="148dp"
-        android:text="조회하기" />
-
-</RelativeLayout>
