@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 public class FragmentFreeBoard extends Fragment {
@@ -26,9 +27,22 @@ public class FragmentFreeBoard extends Fragment {
             }
         });
 
+        Button btnWritePost = view.findViewById(R.id.btn_write_post);
+        btnWritePost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = getParentFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.containers, new FragmentWritePost())
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
         return view;
     }
 }
+
 
 
 

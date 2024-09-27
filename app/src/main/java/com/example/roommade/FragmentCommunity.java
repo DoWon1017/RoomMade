@@ -13,6 +13,8 @@ public class FragmentCommunity extends Fragment {
 
     private Button btnNotice;
     private Button btnFreeBoard;
+    private Button btnOrderDelivery;
+    private Button btnExercise;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -20,6 +22,8 @@ public class FragmentCommunity extends Fragment {
 
         btnNotice = view.findViewById(R.id.btn_notice);
         btnFreeBoard = view.findViewById(R.id.btn_free_board);
+        btnOrderDelivery = view.findViewById(R.id.btn_delivery);
+        btnExercise = view.findViewById(R.id.btn_exercise);
 
         btnNotice.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,6 +39,20 @@ public class FragmentCommunity extends Fragment {
             }
         });
 
+        btnOrderDelivery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                replaceFragment(new FragmentOrderDelivery());
+            }
+        });
+
+        btnExercise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                replaceFragment(new FragmentExercise());
+            }
+        });
+
         return view;
     }
 
@@ -46,6 +64,7 @@ public class FragmentCommunity extends Fragment {
         fragmentTransaction.commit();
     }
 }
+
 
 
 
