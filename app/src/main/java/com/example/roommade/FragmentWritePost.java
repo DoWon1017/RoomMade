@@ -10,11 +10,26 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class FragmentWritePost extends Fragment {
+
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_writepost, container, false);
+
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         ImageButton btnBack = view.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -37,16 +52,65 @@ public class FragmentWritePost extends Fragment {
                 if (title.isEmpty() || content.isEmpty()) {
                     Toast.makeText(getActivity(), "제목과 내용을 모두 입력하세요.", Toast.LENGTH_SHORT).show();
                 } else {
-                    // 게시글 저장 로직을 여기에 추가
-                    Toast.makeText(getActivity(), "게시글이 저장되었습니다.", Toast.LENGTH_SHORT).show();
-                    // 입력 필드 초기화
-                    editTextTitle.setText("");
-                    editTextContent.setText("");
+                    savePostToFirestore(title, content);
                 }
             }
         });
 
         return view;
     }
+
+    private void savePostToFirestore(String title, String content) {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
+
+            Map<String, Object> post = new HashMap<>();
+            post.put("title", title);
+            post.put("content", content);
+            post.put("userId", userId);
+            post.put("timestamp", System.currentTimeMillis());
+
+            db.collection("freeboard_posts")
+                    .document()
+                    .set(post)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(getActivity(), "게시글이 성공적으로 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                                clearFields();
+
+                                // FragmentFreeBoardPost로 이동
+                                FragmentFreeBoardPost fragmentFreeBoardPost = new FragmentFreeBoardPost();
+                                Bundle args = new Bundle();
+                                args.putString("title", title);
+                                args.putString("content", content);
+                                args.putString("userId", userId);
+                                args.putLong("timestamp", System.currentTimeMillis());
+                                fragmentFreeBoardPost.setArguments(args);
+
+                                getParentFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.containers, fragmentFreeBoardPost)
+                                        .addToBackStack(null)
+                                        .commit();
+                            } else {
+                                Toast.makeText(getActivity(), "게시글 저장에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        } else {
+            Toast.makeText(getActivity(), "사용자가 로그인되어 있지 않습니다", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void clearFields() {
+        EditText editTextTitle = getView().findViewById(R.id.editTextTitle);
+        EditText editTextContent = getView().findViewById(R.id.editTextContent);
+        editTextTitle.setText("");
+        editTextContent.setText("");
+    }
 }
+
 
