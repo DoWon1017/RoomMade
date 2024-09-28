@@ -17,6 +17,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ActivityB extends AppCompatActivity {
 
     private EditText rewardInput, penaltyInput;
@@ -90,15 +93,45 @@ public class ActivityB extends AppCompatActivity {
             FirebaseUser user = mAuth.getCurrentUser();
             if (user != null) {
                 String userId = user.getUid();
-                db.collection("scores").document(userId)
-                        .update("score", FieldValue.increment(rewardValue))
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                // 해당 문서가 존재하는지 확인 후 없으면 생성
+                db.collection("scores").document(userId).get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(ActivityB.this, "상점이 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                                    if (task.getResult().exists()) {
+                                        // 문서가 있을 때는 update
+                                        db.collection("scores").document(userId)
+                                                .update("score", FieldValue.increment(rewardValue))
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Toast.makeText(ActivityB.this, "상점이 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                                                        } else {
+                                                            Toast.makeText(ActivityB.this, "상점 저장 실패: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                });
+                                    } else {
+                                        // 문서가 없을 때는 새로 생성
+                                        Map<String, Object> initialData = new HashMap<>();
+                                        initialData.put("score", rewardValue);
+                                        db.collection("scores").document(userId)
+                                                .set(initialData)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Toast.makeText(ActivityB.this, "상점이 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                                                        } else {
+                                                            Toast.makeText(ActivityB.this, "상점 저장 실패: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                });
+                                    }
                                 } else {
-                                    Toast.makeText(ActivityB.this, "상점 저장 실패: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ActivityB.this, "데이터베이스 접근 오류", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -121,15 +154,42 @@ public class ActivityB extends AppCompatActivity {
             FirebaseUser user = mAuth.getCurrentUser();
             if (user != null) {
                 String userId = user.getUid();
-                db.collection("scores").document(userId)
-                        .update("score", FieldValue.increment(-penaltyValue))
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                db.collection("scores").document(userId).get()
+                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<Void> task) {
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(ActivityB.this, "벌점이 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                                    if (task.getResult().exists()) {
+                                        db.collection("scores").document(userId)
+                                                .update("score", FieldValue.increment(-penaltyValue))
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Toast.makeText(ActivityB.this, "벌점이 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                                                        } else {
+                                                            Toast.makeText(ActivityB.this, "벌점 저장 실패: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                });
+                                    } else {
+                                        Map<String, Object> initialData = new HashMap<>();
+                                        initialData.put("score", -penaltyValue);
+                                        db.collection("scores").document(userId)
+                                                .set(initialData)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        if (task.isSuccessful()) {
+                                                            Toast.makeText(ActivityB.this, "벌점이 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                                                        } else {
+                                                            Toast.makeText(ActivityB.this, "벌점 저장 실패: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                });
+                                    }
                                 } else {
-                                    Toast.makeText(ActivityB.this, "벌점 저장 실패: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ActivityB.this, "데이터베이스 접근 오류", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -139,7 +199,6 @@ public class ActivityB extends AppCompatActivity {
         }
     }
 
-    // 상벌점 점수 조회
     private void checkTotalScore() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
@@ -148,17 +207,20 @@ public class ActivityB extends AppCompatActivity {
                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful() && task.getResult() != null) {
+                            if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
-                                if (document.exists()) {
-                                    // score 필드가 존재하면 해당 값 사용, 없으면 0으로 처리
+                                if (document != null && document.exists()) {
+                                    // 필드가 존재하고 값이 있을 때
                                     Long totalScore = document.getLong("score");
-                                    if (totalScore == null) {
-                                        totalScore = 0L; // score 필드가 없을 경우 0으로 설정
+                                    if (totalScore != null) {
+                                        // 필드에 값이 있을 경우 출력
+                                        Toast.makeText(ActivityB.this, "상벌점 합산 점수는 " + totalScore + "점입니다.", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        // 필드가 null일 경우 0점으로 처리
+                                        Toast.makeText(ActivityB.this, "상벌점 합산 점수는 0점입니다.", Toast.LENGTH_SHORT).show();
                                     }
-                                    Toast.makeText(ActivityB.this, "상벌점 합산 점수는 " + totalScore + "점입니다.", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    // 문서가 없을 경우 0점 처리
+                                    // 문서 자체가 없을 경우
                                     Toast.makeText(ActivityB.this, "상벌점 합산 점수는 0점입니다.", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
