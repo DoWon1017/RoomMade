@@ -32,11 +32,10 @@ public class FragmentFreeBoardPost extends Fragment {
 
             textViewTitle.setText(post.getTitle());
             textViewContent.setText(post.getContent());
-            textViewAuthor.setText("작성자: " + post.getUserId());
+            textViewAuthor.setText("익명");
             textViewTimestamp.setText(formatDate(post.getTimestamp()));
         }
 
-        // btn_back 버튼 클릭 이벤트 추가
         ImageButton btnBack = view.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
