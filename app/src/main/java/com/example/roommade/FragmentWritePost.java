@@ -78,7 +78,7 @@ public class FragmentWritePost extends Fragment {
                         @Override
                         public void onComplete(Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(getActivity(), "게시글이 성공적으로 저장되었습니다.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "게시글이 작성되었습니다.", Toast.LENGTH_SHORT).show();
                                 clearFields();
 
                                 // FragmentFreeBoardPost로 이동
@@ -96,7 +96,7 @@ public class FragmentWritePost extends Fragment {
                                         .addToBackStack(null)
                                         .commit();
                             } else {
-                                Toast.makeText(getActivity(), "게시글 저장에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "게시글 작성에 실패했습니다.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

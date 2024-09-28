@@ -16,7 +16,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Query;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +49,12 @@ public class FragmentFreeBoard extends Fragment {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getParentFragmentManager().popBackStack();
+                FragmentCommunity fragmentCommunity = new FragmentCommunity();
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.containers, fragmentCommunity)
+                        .addToBackStack(null)  // BackStack에 추가
+                        .commit();
             }
         });
 
@@ -89,6 +93,7 @@ public class FragmentFreeBoard extends Fragment {
                 });
     }
 }
+
 
 
 
