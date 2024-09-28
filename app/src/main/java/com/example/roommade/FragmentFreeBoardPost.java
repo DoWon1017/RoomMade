@@ -58,6 +58,3 @@ public class FragmentFreeBoardPost extends Fragment {
         return sdf.format(date);
     }
 }
-
-
-

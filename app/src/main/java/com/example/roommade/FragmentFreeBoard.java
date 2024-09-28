@@ -49,7 +49,12 @@ public class FragmentFreeBoard extends Fragment {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getParentFragmentManager().popBackStack();
+                FragmentCommunity fragmentCommunity = new FragmentCommunity();
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.containers, fragmentCommunity)
+                        .addToBackStack(null)  // BackStack에 추가
+                        .commit();
             }
         });
 
@@ -88,6 +93,7 @@ public class FragmentFreeBoard extends Fragment {
                 });
     }
 }
+
 
 
 

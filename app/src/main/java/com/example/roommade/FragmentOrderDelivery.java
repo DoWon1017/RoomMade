@@ -31,7 +31,12 @@ public class FragmentOrderDelivery extends Fragment {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getParentFragmentManager().popBackStack();
+                FragmentCommunity fragmentCommunity = new FragmentCommunity();
+                getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.containers, fragmentCommunity)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
