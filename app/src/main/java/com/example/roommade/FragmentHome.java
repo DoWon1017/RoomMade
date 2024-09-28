@@ -97,7 +97,7 @@ public class FragmentHome extends Fragment {
                                 // 상위 5명에 들 수 있는지 확인
                                 checkIfTop5(point, distanceScore);
                             } else {
-                                Toast.makeText(getContext(), "사용자 데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "기숙사 신청을 해주세요.", Toast.LENGTH_SHORT).show();
                             }
                         } else {
                             Toast.makeText(getContext(), "데이터 확인 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
