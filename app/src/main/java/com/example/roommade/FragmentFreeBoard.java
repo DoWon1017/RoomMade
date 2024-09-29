@@ -53,7 +53,7 @@ public class FragmentFreeBoard extends Fragment {
                 getParentFragmentManager()
                         .beginTransaction()
                         .replace(R.id.containers, fragmentCommunity)
-                        .addToBackStack(null)  // BackStack에 추가
+                        .addToBackStack(null)
                         .commit();
             }
         });

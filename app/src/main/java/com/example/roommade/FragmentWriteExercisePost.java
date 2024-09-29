@@ -19,14 +19,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FragmentWritePost extends Fragment {
+public class FragmentWriteExercisePost extends Fragment {
 
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_writepost, container, false);
+        View view = inflater.inflate(R.layout.fragment_writeexercisepost, container, false);
 
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
@@ -35,13 +35,18 @@ public class FragmentWritePost extends Fragment {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getParentFragmentManager().popBackStack();
+                FragmentExercise fragmentExercise = new FragmentExercise();
+                getParentFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.containers, fragmentExercise)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
         Button btnWritePost = view.findViewById(R.id.btn_write_post);
-        EditText editTextTitle = view.findViewById(R.id.editTextTitle);
-        EditText editTextContent = view.findViewById(R.id.editTextContent);
+        EditText editTextTitle = view.findViewById(R.id.editTextExerciseTitle);
+        EditText editTextContent = view.findViewById(R.id.editTextExerciseContent);
 
         btnWritePost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,7 +57,7 @@ public class FragmentWritePost extends Fragment {
                 if (title.isEmpty() || content.isEmpty()) {
                     Toast.makeText(getActivity(), "제목과 내용을 모두 입력하세요.", Toast.LENGTH_SHORT).show();
                 } else {
-                    savePostToFirestore(title, content);
+                    saveExercisePostToFirestore(title, content);
                 }
             }
         });
@@ -60,7 +65,7 @@ public class FragmentWritePost extends Fragment {
         return view;
     }
 
-    private void savePostToFirestore(String title, String content) {
+    private void saveExercisePostToFirestore(String title, String content) {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             String userId = user.getUid();
@@ -71,7 +76,7 @@ public class FragmentWritePost extends Fragment {
             post.put("userId", userId);
             post.put("timestamp", System.currentTimeMillis());
 
-            db.collection("freeboard_posts")
+            db.collection("exercise_posts")
                     .document()
                     .set(post)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -81,17 +86,17 @@ public class FragmentWritePost extends Fragment {
                                 Toast.makeText(getActivity(), "게시글이 작성되었습니다.", Toast.LENGTH_SHORT).show();
                                 clearFields();
 
-                                FragmentFreeBoardPost fragmentFreeBoardPost = new FragmentFreeBoardPost();
+                                FragmentExercisePost fragmentExercisePost = new FragmentExercisePost();
                                 Bundle args = new Bundle();
                                 args.putString("title", title);
                                 args.putString("content", content);
                                 args.putString("userId", userId);
                                 args.putLong("timestamp", System.currentTimeMillis());
-                                fragmentFreeBoardPost.setArguments(args);
+                                fragmentExercisePost.setArguments(args);
 
                                 getParentFragmentManager()
                                         .beginTransaction()
-                                        .replace(R.id.containers, fragmentFreeBoardPost)
+                                        .replace(R.id.containers, fragmentExercisePost)
                                         .addToBackStack(null)
                                         .commit();
                             } else {
@@ -104,6 +109,7 @@ public class FragmentWritePost extends Fragment {
         }
     }
 
+
     private void clearFields() {
         EditText editTextTitle = getView().findViewById(R.id.editTextTitle);
         EditText editTextContent = getView().findViewById(R.id.editTextContent);
@@ -111,5 +117,3 @@ public class FragmentWritePost extends Fragment {
         editTextContent.setText("");
     }
 }
-
-

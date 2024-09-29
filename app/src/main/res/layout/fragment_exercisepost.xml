@@ -38,7 +38,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/textViewTitle"
+            android:id="@+id/textViewExerciseTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="제목"
@@ -47,7 +47,7 @@
             android:layout_marginTop="20dp"/>
 
         <TextView
-            android:id="@+id/textViewAuthor"
+            android:id="@+id/textViewExerciseAuthor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="익명"
@@ -55,7 +55,7 @@
             android:layout_marginTop="5dp"/>
 
         <TextView
-            android:id="@+id/textViewTimestamp"
+            android:id="@+id/textViewExerciseTimestamp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="작성 시간: 2024-09-28 12:00"
@@ -63,7 +63,7 @@
             android:layout_marginTop="5dp"/>
 
         <TextView
-            android:id="@+id/textViewContent"
+            android:id="@+id/textViewExerciseContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="내용"
