@@ -109,7 +109,6 @@ public class FragmentWriteExercisePost extends Fragment {
         }
     }
 
-
     private void clearFields() {
         EditText editTextTitle = getView().findViewById(R.id.editTextExerciseTitle);
         EditText editTextContent = getView().findViewById(R.id.editTextExerciseContent);
