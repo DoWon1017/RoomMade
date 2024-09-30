@@ -47,7 +47,7 @@ public class ActivityA extends AppCompatActivity {
         apply = findViewById(R.id.submitButton);
 
 
-        // 신청 버튼 클릭 리스너
+        // 기입 버튼 클릭 리스너
         apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

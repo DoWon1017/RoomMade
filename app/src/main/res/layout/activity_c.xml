@@ -27,7 +27,6 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp">
 
-        <!-- 게시판 이름 -->
         <TextView
             android:id="@+id/deliveryBoardTitle"
             android:layout_width="0dp"
@@ -38,7 +37,6 @@
             android:textColor="#333333"
             android:gravity="center_vertical" />
 
-        <!-- 조회하기 버튼 -->
         <Button
             android:id="@+id/deliveryBoardButton"
             android:layout_width="wrap_content"
@@ -59,7 +57,6 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp">
 
-        <!-- 게시판 이름 -->
         <TextView
             android:id="@+id/sportsBoardTitle"
             android:layout_width="0dp"
@@ -70,7 +67,6 @@
             android:textColor="#333333"
             android:gravity="center_vertical" />
 
-        <!-- 조회하기 버튼 -->
         <Button
             android:id="@+id/sportsBoardButton"
             android:layout_width="wrap_content"
@@ -91,7 +87,6 @@
         android:layout_gravity="center"
         android:layout_marginBottom="20dp">
 
-        <!-- 게시판 이름 -->
         <TextView
             android:id="@+id/communityBoardTitle"
             android:layout_width="0dp"
@@ -102,7 +97,6 @@
             android:textColor="#333333"
             android:gravity="center_vertical" />
 
-        <!-- 조회하기 버튼 -->
         <Button
             android:id="@+id/communityBoardButton"
             android:layout_width="wrap_content"
@@ -113,8 +107,17 @@
             android:backgroundTint="#9933CC"
             android:padding="10dp"
             android:layout_gravity="center" />
-
     </LinearLayout>
+
+    <!-- RecyclerView 추가 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" /> <!-- 처음에는 보이지 않도록 설정 -->
+
     <!-- 뒤로가기 버튼 -->
     <Button
         android:id="@+id/backButton"
@@ -127,6 +130,4 @@
         android:padding="10dp"
         android:layout_marginTop="10dp"
         android:layout_gravity="center" />
-
 </LinearLayout>
-
