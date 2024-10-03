@@ -33,6 +33,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
         holder.itemView.setOnClickListener(v -> {
             Bundle args = new Bundle();
+            args.putString("postId", post.getPostId());
             args.putString("title", post.getTitle());
             args.putString("content", post.getContent());
             args.putString("userId", post.getUserId());
@@ -65,5 +66,6 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         }
     }
 }
+
 
 

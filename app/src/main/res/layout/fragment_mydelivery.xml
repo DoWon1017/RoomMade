@@ -29,7 +29,7 @@
                 android:id="@+id/pageTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="같이 배달시켜요"
+                android:text="내가 쓴글"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_weight="1"
@@ -46,6 +46,11 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:scrollbars="vertical"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
