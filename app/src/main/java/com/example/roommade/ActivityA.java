@@ -92,19 +92,22 @@ public class ActivityA extends AppCompatActivity {
             }
 
             // 데이터베이스에 저장
-            saveUserData(userId, nameText, gradeText, birthDateText, locationText, schedule);
+            saveUserData(userId, nameText, gradeText, birthDateText, locationText);
+
+            //시간표 정보만 따로 passed_users에 업데이트
+            saveUserData(userId, schedule);
         } else {
             Toast.makeText(getApplicationContext(), "사용자가 로그인되어 있지 않습니다", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void saveUserData(String userId, String nameText, String gradeText, String birthDateText, String locationText, int schedule) {
+    private void saveUserData(String userId, String nameText, String gradeText, String birthDateText, String locationText) {
         Map<String, Object> userData = new HashMap<>();
         userData.put("name", nameText);
         userData.put("grade", gradeText);
         userData.put("birthDate", birthDateText);
         userData.put("location", locationText);
-        userData.put("schedule", schedule);  // 시간표 데이터를 저장
+
 
         db.collection("information").document(userId)
                 .set(userData)
@@ -120,6 +123,30 @@ public class ActivityA extends AppCompatActivity {
                     }
                 });
     }
+
+
+    //시간표 정보만 따로 passed_users에 업데이트
+    private void saveUserData(String userId, int schedule) {
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("schedule", schedule);
+
+        // Use update instead of set to only modify the schedule field
+        db.collection("passed_users").document(userId)
+                .update(userData)  // Update the specific field
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getApplicationContext(), "정보기입이 성공적으로 이루어졌습니다.", Toast.LENGTH_SHORT).show();
+                            navigateBack();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "정보기입이 실패했습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+
 
     private void navigateBack() {
         finish(); // 현재 액티비티 종료
