@@ -10,6 +10,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FieldValue;
 import java.util.List;
 
 public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapter.ViewHolder> {
@@ -17,11 +19,13 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
     private List<DeliveryPost> deliveryPostList;
     private Context context;
     private String currentUserId;
+    private FirebaseFirestore db;
 
-    public DeliveryPostAdapter(Context context, List<DeliveryPost> deliveryPostList, String currentUserId) {
+    public DeliveryPostAdapter(Context context, List<DeliveryPost> deliveryPostList, String currentUserId, FirebaseFirestore db) {
         this.context = context;
         this.deliveryPostList = deliveryPostList;
         this.currentUserId = currentUserId;
+        this.db = db;
     }
 
     @Override
@@ -72,6 +76,7 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
                     .setMessage("같이 배달 하시겠습니까?")
                     .setPositiveButton("예", (dialog, which) -> {
                         if (context instanceof FragmentActivity) {
+                            addParticipant(post, currentUserId); // 참여자 추가
                             navigateToChatRoom(post, ((FragmentActivity) context).getSupportFragmentManager());
                         }
                     })
@@ -80,6 +85,16 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
             AlertDialog dialog = builder.create();
             dialog.show();
         }
+    }
+
+    private void addParticipant(DeliveryPost post, String userId) {
+        db.collection("deliveryPosts").document(post.getPostId())
+                .update("participantIds", FieldValue.arrayUnion(userId))
+                .addOnSuccessListener(aVoid -> {
+                    post.getParticipantIds().add(userId);
+                    post.setCurrentParticipants(post.getCurrentParticipants() + 1);
+                    notifyDataSetChanged();
+                });
     }
 
     private void navigateToChatRoom(DeliveryPost post, FragmentManager fragmentManager) {

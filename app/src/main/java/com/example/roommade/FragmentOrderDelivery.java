@@ -63,7 +63,7 @@ public class FragmentOrderDelivery extends Fragment {
                 LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        adapter = new DeliveryPostAdapter(getContext(), deliveryPosts, currentUserId);
+        adapter = new DeliveryPostAdapter(getContext(), deliveryPosts, currentUserId, db);
         recyclerView.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
