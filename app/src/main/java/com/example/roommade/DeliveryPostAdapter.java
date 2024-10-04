@@ -26,7 +26,14 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
         DeliveryPost post = deliveryPostList.get(position);
         holder.textViewTitle.setText(post.getTitle());
         holder.textViewRemainingTime.setText(post.getRemainingTime());
+
+        int currentParticipants = post.getCurrentParticipants();
+        int maxParticipants = post.getMaxParticipants();
+        String participantsText = currentParticipants + "/" + maxParticipants;
+
+        holder.textViewParticipants.setText(participantsText);
     }
+
 
     @Override
     public int getItemCount() {
@@ -36,11 +43,14 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTitle;
         TextView textViewRemainingTime;
+        TextView textViewParticipants;
 
         public ViewHolder(View itemView) {
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.textViewDeliveryTitle);
             textViewRemainingTime = itemView.findViewById(R.id.textViewRemainingTime);
+            textViewParticipants = itemView.findViewById(R.id.textViewParticipants);
         }
     }
+
 }

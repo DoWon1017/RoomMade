@@ -48,6 +48,13 @@ public class FragmentWriteDeliveryPost extends Fragment {
         EditText editTextTitle = view.findViewById(R.id.editTextDeliveryTitle);
         Spinner spinnerTime = view.findViewById(R.id.spinnerTime);
 
+        Spinner spinnerParticipants = view.findViewById(R.id.spinnerParticipants);
+        String[] participantsOptions = {"2명", "3명", "4명", "5명", "6명", "7명", "8명"};
+        ArrayAdapter<String> participantsAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_spinner_item, participantsOptions);
+        participantsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerParticipants.setAdapter(participantsAdapter);
+
         String[] timeOptions = {
                 "10분", "15분", "20분", "25분", "30분",
                 "35분", "40분", "45분", "50분", "55분", "1시간"
@@ -62,6 +69,7 @@ public class FragmentWriteDeliveryPost extends Fragment {
             public void onClick(View v) {
                 String title = editTextTitle.getText().toString().trim();
                 String remainingTime = spinnerTime.getSelectedItem() != null ? spinnerTime.getSelectedItem().toString() : null;
+                String selectedParticipants = spinnerParticipants.getSelectedItem() != null ? spinnerParticipants.getSelectedItem().toString() : null;
 
                 if (title.isEmpty()) {
                     Toast.makeText(getActivity(), "제목을 입력하세요", Toast.LENGTH_SHORT).show();
@@ -72,6 +80,13 @@ public class FragmentWriteDeliveryPost extends Fragment {
                     Toast.makeText(getActivity(), "시간을 선택하세요", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                if (selectedParticipants == null || selectedParticipants.isEmpty()) {
+                    Toast.makeText(getActivity(), "모집 인원을 선택하세요", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                int maxParticipants = Integer.parseInt(selectedParticipants.replace("명", ""));
 
                 long startTime = System.currentTimeMillis();
                 long timestamp = System.currentTimeMillis();
@@ -84,6 +99,8 @@ public class FragmentWriteDeliveryPost extends Fragment {
                 post.put("startTime", startTime);
                 post.put("timestamp", timestamp);
                 post.put("userId", userId);
+                post.put("maxParticipants", maxParticipants);
+                post.put("currentParticipants", 1);
 
                 postsRef.add(post)
                         .addOnSuccessListener(documentReference -> {
@@ -94,7 +111,7 @@ public class FragmentWriteDeliveryPost extends Fragment {
                                     .commit();
                         })
                         .addOnFailureListener(e -> {
-                            Toast.makeText(getActivity(), "게시글 작성에 실패했습니다 ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "게시글 작성에 실패했습니다", Toast.LENGTH_SHORT).show();
                         });
             }
         });

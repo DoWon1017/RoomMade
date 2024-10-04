@@ -81,20 +81,32 @@ public class FragmentOrderDelivery extends Fragment {
                             long startTime = document.getLong("startTime");
                             long timestamp = document.getLong("timestamp");
                             String userId = document.getString("userId");
+                            int maxParticipants = document.getLong("maxParticipants").intValue();
+                            int currentParticipants = document.getLong("currentParticipants").intValue();
 
                             long remainingMillis = getRemainingTimeInMillis(startTime, remainingTime);
                             if (remainingMillis > 0) {
-                                DeliveryPost post = new DeliveryPost(title, formatRemainingTime(remainingMillis), timestamp, userId);
+                                DeliveryPost post = new DeliveryPost(
+                                        title,
+                                        formatRemainingTime(remainingMillis),
+                                        timestamp,
+                                        userId,
+                                        maxParticipants,
+                                        currentParticipants
+                                );
                                 deliveryPosts.add(post);
                                 updateRemainingTime(post, startTime, remainingTime);
                             } else {
-                                deliveryPosts.add(new DeliveryPost(title, "모집 종료", timestamp, userId));
+                                deliveryPosts.add(new DeliveryPost(title, "모집 종료", timestamp, userId, maxParticipants, currentParticipants));
                             }
                         }
                         adapter.notifyDataSetChanged();
                     }
                 });
     }
+
+
+
 
 
     private void updateRemainingTime(DeliveryPost post, long startTime, String remainingTime) {
@@ -145,7 +157,3 @@ public class FragmentOrderDelivery extends Fragment {
         }
     }
 }
-
-
-
-

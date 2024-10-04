@@ -5,14 +5,16 @@ public class DeliveryPost {
     private String remainingTime;
     private long timestamp;
     private String userId;
+    private int maxParticipants;
+    private int currentParticipants;
 
-
-
-    public DeliveryPost(String title, String remainingTime, long timestamp, String userId) {
+    public DeliveryPost(String title, String remainingTime, long timestamp, String userId, int maxParticipants, int currentParticipants) {
         this.title = title;
         this.remainingTime = remainingTime;
         this.timestamp = timestamp;
-        this.userId = userId; // 생성자에서 초기화
+        this.userId = userId;
+        this.maxParticipants = maxParticipants;
+        this.currentParticipants = currentParticipants;
     }
 
     public String getTitle() {
@@ -38,5 +40,22 @@ public class DeliveryPost {
     public String getUserId() {
         return userId;
     }
+
+    public int getMaxParticipants() {
+        return maxParticipants;
+    }
+
+    public void setMaxParticipants(int maxParticipants) {
+        this.maxParticipants = maxParticipants;
+    }
+
+    public int getCurrentParticipants() {
+        return currentParticipants;
+    }
+
+    public void setCurrentParticipants(int currentParticipants) {
+        this.currentParticipants = currentParticipants;
+    }
 }
+
 
