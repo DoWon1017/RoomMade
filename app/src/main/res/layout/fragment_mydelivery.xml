@@ -36,8 +36,26 @@
                 android:paddingBottom="16dp"
                 android:paddingTop="14dp"/>
 
+            <Button
+                android:id="@+id/btn_delivery_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="삭제하기"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:backgroundTint="#9933CC"
+                android:padding="10dp"/>
+        </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/checkboxLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:visibility="gone"> <!-- 기본적으로 숨김 -->
 
+            <!-- 체크박스와 제목이 나란히 배치되도록 할 예정입니다. -->
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -46,12 +64,5 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:scrollbars="vertical"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
