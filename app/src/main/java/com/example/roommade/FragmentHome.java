@@ -1,5 +1,6 @@
 package com.example.roommade;
 
+import com.example.roommade.UserScore;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -74,11 +75,11 @@ public class FragmentHome extends Fragment {
             public void onClick(View v) {
                 FirebaseUser user = mAuth.getCurrentUser();
                 if (user != null) {
-
+                    // Fetch the passed users and assign rooms
+                    assignRoomsBasedOnSchedule();
                 } else {
                     Toast.makeText(getContext(), "사용자가 로그인되어 있지 않습니다", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
 
@@ -151,10 +152,11 @@ public class FragmentHome extends Fragment {
                                 Double distanceScore = document.getDouble("distanceScore");
                                 String userId = document.getId(); // 유저 ID 가져오기
                                 String name = document.getString("name");
+                                int schedule = 0;
 
                                 if (point != null && distanceScore != null) {
                                     double totalScore = point + distanceScore;
-                                    allUserScores.add(new UserScore(userId, name, point, distanceScore, totalScore));
+                                    allUserScores.add(new UserScore(userId, name, point, distanceScore, totalScore, schedule));
                                 } else {
                                     // 필드가 null인 경우 로그 출력
                                     Toast.makeText(getContext(), "point 또는 distanceScore 필드가 null입니다.", Toast.LENGTH_LONG).show();
@@ -226,94 +228,173 @@ public class FragmentHome extends Fragment {
         }
     }
 
+    private void assignRoomsBasedOnSchedule() {
+        // Firestore에서 합격한 사용자 가져오기
+        db.collection("passed_users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    List<UserScore> passedUsers = new ArrayList<>();
 
+                    for (DocumentSnapshot document : task.getResult()) {
+                        UserScore user = document.toObject(UserScore.class);
+                        if (user != null) {
+                            passedUsers.add(user);
+                        } else {
+                            Toast.makeText(getContext(), "사용자 데이터를 변환하는 데 문제가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
+                    // 총 점수에 따라 합격자를 정렬 (높은 점수 순)
+                    passedUsers.sort((u1, u2) -> Double.compare(u2.getTotalScore(), u1.getTotalScore()));
 
-    public class UserScore {
-        String userId;
-        String name;
-        double point;
-        double distanceScore;
-        double totalScore;
-        int schedule;
+                    // 스케줄별로 사용자를 그룹화할 맵 생성
+                    Map<Integer, List<UserScore>> usersBySchedule = new HashMap<>();
+                    for (int i = 0; i < 4; i++) {
+                        usersBySchedule.put(i, new ArrayList<>());
+                    }
 
-        public UserScore() {
-            // Firestore에서 필요로 하는 기본 생성자
-        }
+                    for (UserScore user : passedUsers) {
+                        int schedule = user.getSchedule();
+                        usersBySchedule.get(schedule).add(user);
+                    }
 
-        public UserScore(String userId, String name, double point, double distanceScore, double totalScore) {
-            this.userId = userId;
-            this.name = name;
-            this.point = point;
-            this.distanceScore = distanceScore;
-            this.totalScore = totalScore;
-        }
+                    // 이제 방 배정 시작
+                    List<List<UserScore>> rooms = new ArrayList<>();
+                    assignRoomsToSchedules(usersBySchedule, rooms);
 
-        public UserScore(String userId, String name, double point, double distanceScore, double totalScore, int schedule) {
-            this.userId = userId;
-            this.name = name;
-            this.point = point;
-            this.distanceScore = distanceScore;
-            this.totalScore = totalScore;
-            this.schedule = schedule; // 추가: 사용자 시간표
-        }
+                    // 남은 사용자가 균등하게 맞지 않을 경우 처리
+                    assignRemainingUsers(usersBySchedule, rooms);
 
-        // getter 및 setter 추가
-        public String getUserId() {
-            return userId;
-        }
+                    // 방 배정을 Firestore에 저장
+                    saveRoomAssignments(rooms);
 
-        public void setUserId(String userId) {
-            this.userId = userId;
-        }
+                    // 방 배정 결과 알림창 표시
+                    showRoomAssignments(rooms);
 
-        public String getName() {
-            return name;
-        }
+                } else {
+                    Toast.makeText(getContext(), "합격자 데이터를 가져오는 중 오류가 발생했습니다." + task.getException(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 
-        public void setName(String name) {
-            this.name = name;
-        }
+    private void assignRoomsToSchedules(Map<Integer, List<UserScore>> usersBySchedule, List<List<UserScore>> rooms) {
+        // 같은 스케줄 내에서 방을 먼저 배정하고, 남은 용량에 따라 배정
+        int twoPersonRoomsLeft = NUMBER_OF_ROOM_TWO;
+        int threePersonRoomsLeft = NUMBER_OF_ROOM_THREE;
 
+        for (int schedule = 0; schedule < 4; schedule++) {
+            List<UserScore> users = usersBySchedule.get(schedule);
 
-        public double getPoint() {
-            return point;
-        }
-
-        public void setPoint(double point) {
-            this.point = point;
-        }
-
-        public double getDistanceScore() {
-            return distanceScore;
-        }
-
-        public void setDistanceScore(double distanceScore) {
-            this.distanceScore = distanceScore;
-        }
-
-        public double getTotalScore() {
-            return totalScore;
-        }
-
-        public void setTotalScore(double totalScore) {
-            this.totalScore = totalScore;
-        }
-        public int getSchedule() {
-            return schedule;
-        }
-
-        public void setSchedule(int schedule) {
-            this.schedule = schedule;
+            while (!users.isEmpty()) {
+                if (twoPersonRoomsLeft > 0 && users.size() >= 2) {
+                    // 2인실 배정
+                    rooms.add(new ArrayList<>(users.subList(0, 2)));
+                    users.subList(0, 2).clear();
+                    twoPersonRoomsLeft--;
+                } else if (threePersonRoomsLeft > 0 && users.size() >= 3) {
+                    // 3인실 배정
+                    rooms.add(new ArrayList<>(users.subList(0, 3)));
+                    users.subList(0, 3).clear();
+                    threePersonRoomsLeft--;
+                } else {
+                    break; // 남은 방을 배정할 수 없음
+                }
+            }
         }
     }
 
+    private void assignRemainingUsers(Map<Integer, List<UserScore>> usersBySchedule, List<List<UserScore>> rooms) {
+        // 이제 남은 사용자들을 배정, 스케줄이 달라도 상관 없음
+        int twoPersonRoomsLeft = NUMBER_OF_ROOM_TWO - rooms.size(); // 남은 방 수 확인
+        int threePersonRoomsLeft = NUMBER_OF_ROOM_THREE - rooms.size();
+
+        List<UserScore> remainingUsers = new ArrayList<>();
+        for (List<UserScore> users : usersBySchedule.values()) {
+            remainingUsers.addAll(users);
+        }
+
+        while (!remainingUsers.isEmpty()) {
+            if (twoPersonRoomsLeft > 0 && remainingUsers.size() >= 2) {
+                // 남은 2인실 배정
+                rooms.add(new ArrayList<>(remainingUsers.subList(0, 2)));
+                remainingUsers.subList(0, 2).clear();
+                twoPersonRoomsLeft--;
+            } else if (threePersonRoomsLeft > 0 && remainingUsers.size() >= 3) {
+                // 남은 3인실 배정
+                rooms.add(new ArrayList<>(remainingUsers.subList(0, 3)));
+                remainingUsers.subList(0, 3).clear();
+                threePersonRoomsLeft--;
+            } else {
+                break; // 더 이상 배정할 방 없음
+            }
+        }
+    }
+
+    private void saveRoomAssignments(List<List<UserScore>> rooms) {
+        // 기존 방 배정 삭제
+        db.collection("room_assignments").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        db.collection("room_assignments").document(document.getId()).delete();
+                    }
+
+                    // 새로운 방 배정 저장
+                    for (int i = 0; i < rooms.size(); i++) {
+                        List<UserScore> room = rooms.get(i);
+                        Map<String, Object> roomData = new HashMap<>();
+                        roomData.put("roomNumber", i + 1);
+
+                        List<String> userIds = new ArrayList<>();
+                        for (UserScore user : room) {
+                            userIds.add(user.getName());
+                        }
+                        roomData.put("userIds", userIds);
+
+                        db.collection("room_assignments").add(roomData)
+                                .addOnSuccessListener(aVoid -> {
+
+                                    // 성공 처리
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getContext(), "방 배정 저장에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                } else {
+                    Toast.makeText(getContext(), "기존 배정 삭제 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 
 
     private void showResultDialog(String message) {
         new AlertDialog.Builder(getContext())
                 .setTitle("결과")
                 .setMessage(message)
+                .setPositiveButton("확인", null)
+                .show();
+    }
+
+    private void showRoomAssignments(List<List<UserScore>> rooms) {
+        StringBuilder message = new StringBuilder("방 배정 결과:\n");
+        for (int i = 0; i < rooms.size(); i++) {
+            message.append("방 번호 ").append(i + 1).append(": ");
+            for (UserScore user : rooms.get(i)) {
+                message.append(user.getName()).append(", ");
+            }
+            // 마지막 쉼표 제거
+            message.setLength(message.length() - 2);
+            message.append("\n");
+        }
+
+        // 결과 알림창 띄우기
+        new AlertDialog.Builder(getContext())
+                .setTitle("방 배정 결과")
+                .setMessage(message.toString())
                 .setPositiveButton("확인", null)
                 .show();
     }
