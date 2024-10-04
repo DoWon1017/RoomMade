@@ -47,7 +47,14 @@ public class FragmentFreeBoard extends Fragment {
         loadPosts();
 
         ImageButton btnBack = view.findViewById(R.id.btn_back);
-        btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
+        btnBack.setOnClickListener(v -> {
+            FragmentCommunity fragmentCommunity = new FragmentCommunity();
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.containers, fragmentCommunity)
+                    .addToBackStack(null)
+                    .commit();
+        });
 
         Button btnWritePost = view.findViewById(R.id.btn_write_post);
         btnWritePost.setOnClickListener(v -> {
