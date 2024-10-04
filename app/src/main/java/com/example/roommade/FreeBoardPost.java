@@ -7,14 +7,12 @@ public class FreeBoardPost {
     private long timestamp;
     private String postId;
 
-    public FreeBoardPost() {}
-
     public FreeBoardPost(String title, String content, String userId, long timestamp, String postId) {
         this.title = title;
         this.content = content;
         this.userId = userId;
         this.timestamp = timestamp;
-        this.postId = postId; // postId 초기화
+        this.postId = postId;
     }
 
     public String getTitle() { return title; }
@@ -23,4 +21,3 @@ public class FreeBoardPost {
     public long getTimestamp() { return timestamp; }
     public String getPostId() { return postId; }
 }
-

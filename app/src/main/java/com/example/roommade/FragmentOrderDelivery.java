@@ -69,7 +69,7 @@ public class FragmentOrderDelivery extends Fragment {
 
     private void loadDeliveryPosts() {
         db.collection("deliveryPosts")
-                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING) // 최신순으로 정렬
+                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -79,21 +79,23 @@ public class FragmentOrderDelivery extends Fragment {
                             String title = document.getString("title");
                             String remainingTime = document.getString("remainingTime");
                             long startTime = document.getLong("startTime");
-                            long timestamp = document.getLong("timestamp"); // 타임스탬프 추가
+                            long timestamp = document.getLong("timestamp");
+                            String userId = document.getString("userId");
 
                             long remainingMillis = getRemainingTimeInMillis(startTime, remainingTime);
                             if (remainingMillis > 0) {
-                                DeliveryPost post = new DeliveryPost(title, formatRemainingTime(remainingMillis), timestamp); // 타임스탬프 추가
+                                DeliveryPost post = new DeliveryPost(title, formatRemainingTime(remainingMillis), timestamp, userId);
                                 deliveryPosts.add(post);
                                 updateRemainingTime(post, startTime, remainingTime);
                             } else {
-                                deliveryPosts.add(new DeliveryPost(title, "모집 종료", timestamp)); // 타임스탬프 추가
+                                deliveryPosts.add(new DeliveryPost(title, "모집 종료", timestamp, userId));
                             }
                         }
                         adapter.notifyDataSetChanged();
                     }
                 });
     }
+
 
     private void updateRemainingTime(DeliveryPost post, long startTime, String remainingTime) {
         Handler handler = new Handler();
@@ -106,7 +108,6 @@ public class FragmentOrderDelivery extends Fragment {
                     adapter.notifyDataSetChanged();
                     handler.postDelayed(this, 1000);
                 } else {
-                    // 시간이 다 된 경우 처리
                     post.setRemainingTime("모집 종료");
                     adapter.notifyDataSetChanged();
                 }

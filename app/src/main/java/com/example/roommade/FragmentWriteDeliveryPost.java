@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -75,11 +76,14 @@ public class FragmentWriteDeliveryPost extends Fragment {
                 long startTime = System.currentTimeMillis();
                 long timestamp = System.currentTimeMillis();
 
+                String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
                 Map<String, Object> post = new HashMap<>();
                 post.put("title", title);
                 post.put("remainingTime", remainingTime);
                 post.put("startTime", startTime);
                 post.put("timestamp", timestamp);
+                post.put("userId", userId);
 
                 postsRef.add(post)
                         .addOnSuccessListener(documentReference -> {

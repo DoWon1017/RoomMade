@@ -29,7 +29,7 @@
                 android:id="@+id/pageTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="게시글"
+                android:text="게시글      "
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_weight="1"

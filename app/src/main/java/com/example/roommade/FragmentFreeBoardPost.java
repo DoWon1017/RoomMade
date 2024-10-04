@@ -1,6 +1,7 @@
 package com.example.roommade;
 
 import androidx.fragment.app.Fragment;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,14 +33,15 @@ public class FragmentFreeBoardPost extends Fragment {
     private FirebaseFirestore db;
     private String postId;
     private String postUserId;
-    private int anonymousCounter = 1;
-    private Map<String, Integer> userAnonymousMap = new HashMap<>();
+    private String currentUserId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_freeboardpost, container, false);
 
         db = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        currentUserId = user != null ? user.getUid() : null;
 
         Bundle args = getArguments();
         if (args != null) {
@@ -53,15 +55,7 @@ public class FragmentFreeBoardPost extends Fragment {
                     postId
             );
 
-            TextView textViewTitle = view.findViewById(R.id.textViewTitle);
-            TextView textViewContent = view.findViewById(R.id.textViewContent);
-            TextView textViewAuthor = view.findViewById(R.id.textViewAuthor);
-            TextView textViewTimestamp = view.findViewById(R.id.textViewTimestamp);
-
-            textViewTitle.setText(post.getTitle());
-            textViewContent.setText(post.getContent());
-            textViewAuthor.setText("익명");
-            textViewTimestamp.setText(formatDate(post.getTimestamp()));
+            setupPostViews(view);
         }
 
         ImageButton btnBack = view.findViewById(R.id.btn_back);
@@ -77,10 +71,8 @@ public class FragmentFreeBoardPost extends Fragment {
         recyclerViewComments = view.findViewById(R.id.recyclerViewComments);
         editTextComment = view.findViewById(R.id.editTextComment);
         buttonSubmitComment = view.findViewById(R.id.buttonSubmitComment);
-
         commentList = new ArrayList<>();
-        commentAdapter = new CommentAdapter(commentList, (commentId, author, content) -> saveReplyToFirestore(commentId, content));
-
+        commentAdapter = new CommentAdapter(commentList, post, this::deleteComment, this::onReplyClick, this::deleteReply);
         recyclerViewComments.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewComments.setAdapter(commentAdapter);
 
@@ -89,18 +81,26 @@ public class FragmentFreeBoardPost extends Fragment {
         buttonSubmitComment.setOnClickListener(v -> {
             String content = editTextComment.getText().toString().trim();
             if (!content.isEmpty()) {
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                String author = getAuthor(user);
-
                 String timestamp = String.valueOf(System.currentTimeMillis());
-                String commentId = db.collection("freeboard_posts").document(postId).collection("comments").document().getId();
-                saveCommentToFirestore(commentId, author, content, timestamp);
+                saveCommentToFirestore(content, timestamp);
             } else {
                 Toast.makeText(getContext(), "댓글을 입력하세요.", Toast.LENGTH_SHORT).show();
             }
         });
 
         return view;
+    }
+
+    private void setupPostViews(View view) {
+        TextView textViewTitle = view.findViewById(R.id.textViewTitle);
+        TextView textViewContent = view.findViewById(R.id.textViewContent);
+        TextView textViewAuthor = view.findViewById(R.id.textViewAuthor);
+        TextView textViewTimestamp = view.findViewById(R.id.textViewTimestamp);
+
+        textViewTitle.setText(post.getTitle());
+        textViewContent.setText(post.getContent());
+        textViewAuthor.setText("익명");
+        textViewTimestamp.setText(formatDate(post.getTimestamp()));
     }
 
     private void loadComments() {
@@ -116,98 +116,148 @@ public class FragmentFreeBoardPost extends Fragment {
                     if (value != null) {
                         for (QueryDocumentSnapshot doc : value) {
                             String id = doc.getId();
-                            String author = doc.getString("author");
+                            String authorId = doc.getString("authorId");
                             String content = doc.getString("content");
                             long timestamp = doc.getLong("timestamp");
 
-                            Comment comment = new Comment(id, author, content, timestamp);
+                            Comment comment = new Comment(id, authorId, content, timestamp, new ArrayList<Reply>());
+
+
+                            if (content.equals("삭제된 댓글입니다.")) {
+                                comment.setContent("삭제된 댓글입니다.");
+                            }
+
                             commentList.add(comment);
-                            loadRepliesForComment(comment);
+                            loadReplies(id, comment);
                         }
                     }
                     commentAdapter.notifyDataSetChanged();
                 });
     }
 
+    private void loadReplies(String commentId, Comment comment) {
+        if (comment == null) {
+            return;
+        }
 
-    private void loadRepliesForComment(Comment comment) {
-        db.collection("freeboard_posts").document(postId).collection("comments")
-                .document(comment.getId()).collection("replies")
+        db.collection("freeboard_posts").document(postId).collection("comments").document(commentId).collection("replies")
                 .orderBy("timestamp")
                 .addSnapshotListener((value, error) -> {
                     if (error != null) {
-                        Toast.makeText(getContext(), "대댓글을 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "답글을 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
+                    List<Reply> replies = new ArrayList<>();
                     if (value != null) {
-                        comment.getReplies().clear();
                         for (QueryDocumentSnapshot doc : value) {
-                            String replyId = doc.getId();
-                            String replyAuthor = doc.getString("author");
+                            String id = doc.getId();
+                            String replyAuthorId = doc.getString("authorId");
                             String replyContent = doc.getString("content");
                             long replyTimestamp = doc.getLong("timestamp");
 
-                            Comment reply = new Comment(replyId, replyAuthor, replyContent, replyTimestamp);
-                            comment.addReply(reply);
+                            Reply reply = new Reply(id, replyAuthorId, replyContent, replyTimestamp);
+                            replies.add(reply);
                         }
                     }
+
+                    if (comment.getReplies() == null) {
+                        comment.setReplies(replies);
+                    } else {
+                        comment.getReplies().clear();
+                        comment.getReplies().addAll(replies);
+                    }
+
                     commentAdapter.notifyDataSetChanged();
                 });
     }
 
-
-    private void saveCommentToFirestore(String commentId, String author, String content, String timestamp) {
+    private void saveCommentToFirestore(String content, String timestamp) {
         Map<String, Object> commentData = new HashMap<>();
-        commentData.put("author", author);
+        commentData.put("authorId", currentUserId);
         commentData.put("content", content);
         commentData.put("timestamp", Long.parseLong(timestamp));
 
+        String commentId = db.collection("freeboard_posts").document(postId).collection("comments").document().getId();
         db.collection("freeboard_posts").document(postId).collection("comments").document(commentId)
                 .set(commentData)
                 .addOnSuccessListener(aVoid -> {
                     editTextComment.setText("");
-                    Toast.makeText(getContext(), "댓글이 등록되었습니다.", Toast.LENGTH_SHORT).show();
-                    loadComments();
+                    Toast.makeText(getContext(), "댓글이 추가되었습니다.", Toast.LENGTH_SHORT).show();
                 })
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "댓글 등록에 실패했습니다.", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "댓글 추가에 실패했습니다.", Toast.LENGTH_SHORT).show());
     }
 
-    private void saveReplyToFirestore(String commentId, String content) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String author = getAuthor(user);
-        String timestamp = String.valueOf(System.currentTimeMillis());
-        String replyId = db.collection("freeboard_posts").document(postId).collection("comments").document(commentId).collection("replies").document().getId();
+    private void deleteComment(Comment comment, int position) {
+        comment.setContent("삭제된 댓글입니다.");
+        commentAdapter.notifyItemChanged(position);
 
-        Map<String, Object> replyData = new HashMap<>();
-        replyData.put("author", author);
-        replyData.put("content", content);
-        replyData.put("timestamp", Long.parseLong(timestamp));
+        Map<String, Object> updatedData = new HashMap<>();
+        updatedData.put("content", "삭제된 댓글입니다.");
 
-        db.collection("freeboard_posts").document(postId).collection("comments").document(commentId).collection("replies").document(replyId)
-                .set(replyData)
+        db.collection("freeboard_posts").document(postId)
+                .collection("comments").document(comment.getId())
+                .update(updatedData)
                 .addOnSuccessListener(aVoid -> {
-                    loadComments();
-                    Toast.makeText(getContext(), "대댓글이 등록되었습니다.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "댓글이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
                 })
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "대댓글 등록에 실패했습니다.", Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "댓글 삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void deleteReply(Reply reply, String commentId, int position) {
+        Map<String, Object> updatedData = new HashMap<>();
+        updatedData.put("content", "삭제된 답글입니다.");
+
+        db.collection("freeboard_posts").document(postId)
+                .collection("comments").document(commentId)
+                .collection("replies").document(reply.getId())
+                .update(updatedData)
+                .addOnSuccessListener(aVoid -> {
+                    commentAdapter.notifyItemChanged(position);
+                    Toast.makeText(getContext(), "답글이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "답글 삭제에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
+    private void saveReplyToFirestore(String content, String timestamp, String commentId) {
+        Map<String, Object> replyData = new HashMap<>();
+        replyData.put("authorId", currentUserId);
+        replyData.put("content", content);
+        replyData.put("timestamp", System.currentTimeMillis());
+
+        String replyId = db.collection("freeboard_posts").document(postId)
+                .collection("comments").document(commentId).collection("replies").document().getId();
+
+        db.collection("freeboard_posts").document(postId)
+                .collection("comments").document(commentId)
+                .collection("replies").document(replyId)
+                .set(replyData)
+                .addOnSuccessListener(aVoid -> Toast.makeText(getContext(), "답글이 추가되었습니다.", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "답글 추가에 실패했습니다.", Toast.LENGTH_SHORT).show());
+    }
+
+    private void onReplyClick(String commentId, CommentAdapter.CommentViewHolder holder) {
+        editTextComment.setHint("답글을 입력하세요");
+        buttonSubmitComment.setOnClickListener(v -> {
+            String content = editTextComment.getText().toString().trim();
+            if (!content.isEmpty()) {
+                String timestamp = String.valueOf(System.currentTimeMillis());
+                saveReplyToFirestore(content, timestamp, commentId);
+                editTextComment.setText("");
+            } else {
+                Toast.makeText(getContext(), "답글을 입력하세요.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private String formatDate(long timestamp) {
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
         java.util.Date date = new java.util.Date(timestamp);
         return sdf.format(date);
-    }
-
-    private String getAuthor(FirebaseUser user) {
-        if (user != null) {
-            String userId = user.getUid();
-            if (userId.equals(postUserId)) {
-                return "작성자";
-            } else {
-                return "익명" + userAnonymousMap.computeIfAbsent(userId, k -> anonymousCounter++);
-            }
-        }
-        return "익명" + anonymousCounter++;
     }
 }

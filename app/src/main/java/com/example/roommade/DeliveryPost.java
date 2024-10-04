@@ -3,12 +3,16 @@ package com.example.roommade;
 public class DeliveryPost {
     private String title;
     private String remainingTime;
-    private long timestamp; // 타임스탬프 추가
+    private long timestamp;
+    private String userId;
 
-    public DeliveryPost(String title, String remainingTime, long timestamp) { // 생성자 수정
+
+
+    public DeliveryPost(String title, String remainingTime, long timestamp, String userId) {
         this.title = title;
         this.remainingTime = remainingTime;
         this.timestamp = timestamp;
+        this.userId = userId; // 생성자에서 초기화
     }
 
     public String getTitle() {
@@ -29,6 +33,10 @@ public class DeliveryPost {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 }
 
