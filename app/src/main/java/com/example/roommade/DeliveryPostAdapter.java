@@ -36,9 +36,11 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
 
     private boolean isPostClickable(DeliveryPost post, String currentUserId) {
         boolean isActiveAndNotFull = post.isActive() && post.getCurrentParticipants() < post.getMaxParticipants();
-        boolean isParticipant = post.getParticipantIds() != null && post.getParticipantIds().contains(currentUserId);
+        List<String> participantIds = post.getParticipantIds();
+        boolean isParticipant = participantIds != null && participantIds.contains(currentUserId);
         return isActiveAndNotFull || post.getUserId().equals(currentUserId) || isParticipant;
     }
+
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
