@@ -29,11 +29,14 @@ public class FragmentHome extends Fragment {
     private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
-    // 방에 들어갈 수 있는 최대 인원 수 (2인 1실 또는 3인 1실)
-    private static final int ROOM_CAPACITY = 2; // 필요에 따라 2나 3으로 설정 가능
+    // 방설정
+    private static final int CAPACITY_OF_ROOM_TWO= 2; // 2인실
+    private static final int CAPACITY_OF_ROOM_THREE = 3; // 3인실
+    private static final int NUMBER_OF_ROOM_TWO = 2; // 2인실의 갯수
+    private static final int NUMBER_OF_ROOM_THREE = 1; // 3인실의 갯수
 
-    //합격자 수
-    int passNum = 8;
+    //합격자 수 = 2x2인실의 갯수 + 3x3인실의 갯수
+    private static final int passNum = CAPACITY_OF_ROOM_TWO*NUMBER_OF_ROOM_TWO+CAPACITY_OF_ROOM_THREE*NUMBER_OF_ROOM_THREE;
 
 
     @Override

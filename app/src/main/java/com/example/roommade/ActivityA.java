@@ -140,7 +140,7 @@ public class ActivityA extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "정보기입이 성공적으로 이루어졌습니다.", Toast.LENGTH_SHORT).show();
                             navigateBack();
                         } else {
-                            Toast.makeText(getApplicationContext(), "정보기입이 실패했습니다.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "시간표기입은 합격자만 가능합니다.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
