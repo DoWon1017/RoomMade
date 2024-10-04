@@ -15,6 +15,7 @@ import android.widget.ImageButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,16 +58,19 @@ public class FragmentOrderDelivery extends Fragment {
             }
         });
 
+        // Firestore 초기화
+        db = FirebaseFirestore.getInstance();
+
         recyclerView = view.findViewById(R.id.recyclerViewPosts);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        adapter = new DeliveryPostAdapter(getContext(), deliveryPosts, currentUserId, db);
+        // DeliveryPostAdapter 초기화
+        adapter = new DeliveryPostAdapter(getContext(), currentUserId, db);
         recyclerView.setAdapter(adapter);
 
-        db = FirebaseFirestore.getInstance();
         loadDeliveryPosts();
 
         return view;
@@ -97,12 +101,12 @@ public class FragmentOrderDelivery extends Fragment {
 
                             DeliveryPost post = new DeliveryPost(
                                     postId,
+                                    userId,
                                     title,
+                                    currentParticipants,
+                                    maxParticipants,
                                     formatRemainingTime(remainingMillis),
                                     timestamp,
-                                    userId,
-                                    maxParticipants,
-                                    currentParticipants,
                                     isActive,
                                     participantIds
                             );
