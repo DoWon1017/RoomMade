@@ -22,13 +22,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private ReplyClickListener replyClickListener;
     private FreeBoardPost post;
     private ReplyDeleteListener replyDeleteListener;
+    private String currentUserId;  // 현재 로그인한 사용자 ID
 
-    public CommentAdapter(List<Comment> commentList, FreeBoardPost post, CommentDeleteListener deleteListener, ReplyClickListener replyClickListener, ReplyDeleteListener replyDeleteListener) {
+    public CommentAdapter(List<Comment> commentList, FreeBoardPost post, CommentDeleteListener deleteListener,
+                          ReplyClickListener replyClickListener, ReplyDeleteListener replyDeleteListener,
+                          String currentUserId) {
         this.commentList = commentList;
         this.post = post;
         this.deleteListener = deleteListener;
         this.replyClickListener = replyClickListener;
         this.replyDeleteListener = replyDeleteListener;
+        this.currentUserId = currentUserId;
     }
 
 
@@ -49,7 +53,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
             holder.contentTextView.setText(comment.getContent());
         }
         holder.timestampTextView.setText(formatDate(comment.getTimestamp()));
-        if (comment.getAuthorId().equals(post.getUserId())) {
+        if (comment.getAuthorId().equals(currentUserId)) {
             holder.btnDelete.setVisibility(View.VISIBLE);
             holder.btnDelete.setOnClickListener(v -> {
                 new AlertDialog.Builder(holder.itemView.getContext())
@@ -116,7 +120,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 public void onDeleteReply(Reply reply, String commentId, int position) {
                     replyDeleteListener.onDeleteReply(reply, commentId, position);
                 }
-            }, post);
+            }, post, currentUserId);
+
             holder.recyclerViewReplies.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext()));
             holder.recyclerViewReplies.setAdapter(replyAdapter);
             holder.recyclerViewReplies.setVisibility(View.VISIBLE);

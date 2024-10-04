@@ -72,7 +72,7 @@ public class FragmentFreeBoardPost extends Fragment {
         editTextComment = view.findViewById(R.id.editTextComment);
         buttonSubmitComment = view.findViewById(R.id.buttonSubmitComment);
         commentList = new ArrayList<>();
-        commentAdapter = new CommentAdapter(commentList, post, this::deleteComment, this::onReplyClick, this::deleteReply);
+        commentAdapter = new CommentAdapter(commentList, post, this::deleteComment, this::onReplyClick, this::deleteReply, currentUserId);
         recyclerViewComments.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerViewComments.setAdapter(commentAdapter);
 

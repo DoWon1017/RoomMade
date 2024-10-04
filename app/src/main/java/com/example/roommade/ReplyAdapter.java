@@ -20,12 +20,14 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ReplyViewHol
     private int anonymousCount = 1;
     private OnReplyClickListener replyClickListener;
     private FreeBoardPost post;
+    private String currentUserId;
 
-    public ReplyAdapter(List<Reply> replyList, String commentId, OnReplyClickListener replyClickListener, FreeBoardPost post) {
+    public ReplyAdapter(List<Reply> replyList, String commentId, OnReplyClickListener replyClickListener, FreeBoardPost post, String currentUserId) {
         this.replyList = replyList;
         this.commentId = commentId;
         this.replyClickListener = replyClickListener;
         this.post = post;
+        this.currentUserId = currentUserId;
     }
 
     @Override
@@ -43,7 +45,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ReplyViewHol
         holder.contentTextView.setText(reply.getContent());
         holder.timestampTextView.setText(formatDate(reply.getTimestamp()));
 
-        if (reply.getAuthorId().equals(post.getUserId())) {
+        if (reply.getAuthorId().equals(currentUserId)) {
             holder.btnDelete.setVisibility(View.VISIBLE);
             holder.btnDelete.setOnClickListener(v -> {
                 new AlertDialog.Builder(holder.itemView.getContext())
@@ -59,6 +61,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ReplyViewHol
             holder.btnDelete.setVisibility(View.GONE);
         }
     }
+
 
     @Override
     public int getItemCount() {
