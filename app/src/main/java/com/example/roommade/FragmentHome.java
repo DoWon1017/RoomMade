@@ -284,8 +284,13 @@ public class FragmentHome extends Fragment {
         int twoPersonRoomsLeft = NUMBER_OF_ROOM_TWO;
         int threePersonRoomsLeft = NUMBER_OF_ROOM_THREE;
 
-        for (int schedule = 0; schedule < 4; schedule++) {
-            List<UserScore> users = usersBySchedule.get(schedule);
+        // 스케줄별 사용자 수를 기준으로 내림차순 정렬
+        List<Map.Entry<Integer, List<UserScore>>> sortedSchedules = new ArrayList<>(usersBySchedule.entrySet());
+        sortedSchedules.sort((entry1, entry2) -> Integer.compare(entry2.getValue().size(), entry1.getValue().size()));
+
+        // 정렬된 스케줄에 따라 방 배정
+        for (Map.Entry<Integer, List<UserScore>> entry : sortedSchedules) {
+            List<UserScore> users = entry.getValue();
 
             while (!users.isEmpty()) {
                 if (twoPersonRoomsLeft > 0 && users.size() >= 2) {
@@ -306,15 +311,26 @@ public class FragmentHome extends Fragment {
     }
 
     private void assignRemainingUsers(Map<Integer, List<UserScore>> usersBySchedule, List<List<UserScore>> rooms) {
-        // 이제 남은 사용자들을 배정, 스케줄이 달라도 상관 없음
-        int twoPersonRoomsLeft = NUMBER_OF_ROOM_TWO - rooms.size(); // 남은 방 수 확인
-        int threePersonRoomsLeft = NUMBER_OF_ROOM_THREE - rooms.size();
+        // 남은 사용자들을 배정, 스케줄이 달라도 상관 없음
+        int twoPersonRoomsLeft = NUMBER_OF_ROOM_TWO;  // 남은 2인실 수
+        int threePersonRoomsLeft = NUMBER_OF_ROOM_THREE; // 남은 3인실 수
 
+        // 이미 배정된 방의 수만큼 2인실과 3인실의 남은 방 수를 조정
+        for (List<UserScore> room : rooms) {
+            if (room.size() == 2) {
+                twoPersonRoomsLeft--;
+            } else if (room.size() == 3) {
+                threePersonRoomsLeft--;
+            }
+        }
+
+        // 남은 사용자 리스트 생성
         List<UserScore> remainingUsers = new ArrayList<>();
         for (List<UserScore> users : usersBySchedule.values()) {
             remainingUsers.addAll(users);
         }
 
+        // 남은 방에 사용자 배정
         while (!remainingUsers.isEmpty()) {
             if (twoPersonRoomsLeft > 0 && remainingUsers.size() >= 2) {
                 // 남은 2인실 배정
