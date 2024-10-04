@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
@@ -22,10 +24,13 @@ public class FragmentOrderDelivery extends Fragment {
     private DeliveryPostAdapter adapter;
     private List<DeliveryPost> deliveryPosts = new ArrayList<>();
     private FirebaseFirestore db;
+    private String currentUserId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_order_delivery, container, false);
+
+        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         ImageButton btnBack = view.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +63,7 @@ public class FragmentOrderDelivery extends Fragment {
                 LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        adapter = new DeliveryPostAdapter(deliveryPosts);
+        adapter = new DeliveryPostAdapter(getContext(), deliveryPosts, currentUserId);
         recyclerView.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
@@ -76,6 +81,7 @@ public class FragmentOrderDelivery extends Fragment {
                         deliveryPosts.clear();
                         long currentTime = System.currentTimeMillis();
                         for (QueryDocumentSnapshot document : task.getResult()) {
+                            String postId = document.getId();
                             String title = document.getString("title");
                             String remainingTime = document.getString("remainingTime");
                             long startTime = document.getLong("startTime");
@@ -84,30 +90,30 @@ public class FragmentOrderDelivery extends Fragment {
                             int maxParticipants = document.getLong("maxParticipants").intValue();
                             int currentParticipants = document.getLong("currentParticipants").intValue();
 
+                            List<String> participantIds = (List<String>) document.get("participantIds");
+
                             long remainingMillis = getRemainingTimeInMillis(startTime, remainingTime);
-                            if (remainingMillis > 0) {
-                                DeliveryPost post = new DeliveryPost(
-                                        title,
-                                        formatRemainingTime(remainingMillis),
-                                        timestamp,
-                                        userId,
-                                        maxParticipants,
-                                        currentParticipants
-                                );
-                                deliveryPosts.add(post);
-                                updateRemainingTime(post, startTime, remainingTime);
-                            } else {
-                                deliveryPosts.add(new DeliveryPost(title, "모집 종료", timestamp, userId, maxParticipants, currentParticipants));
-                            }
+                            boolean isActive = remainingMillis > 0 && currentParticipants < maxParticipants;
+
+                            DeliveryPost post = new DeliveryPost(
+                                    postId,
+                                    title,
+                                    formatRemainingTime(remainingMillis),
+                                    timestamp,
+                                    userId,
+                                    maxParticipants,
+                                    currentParticipants,
+                                    isActive,
+                                    participantIds
+                            );
+
+                            deliveryPosts.add(post);
+                            updateRemainingTime(post, startTime, remainingTime);
                         }
                         adapter.notifyDataSetChanged();
                     }
                 });
     }
-
-
-
-
 
     private void updateRemainingTime(DeliveryPost post, long startTime, String remainingTime) {
         Handler handler = new Handler();

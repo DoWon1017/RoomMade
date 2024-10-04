@@ -1,20 +1,34 @@
 package com.example.roommade;
 
+import java.util.List;
+
 public class DeliveryPost {
+    private String postId;
     private String title;
     private String remainingTime;
     private long timestamp;
     private String userId;
     private int maxParticipants;
     private int currentParticipants;
+    private boolean isActive;
+    private List<String> participantIds;
 
-    public DeliveryPost(String title, String remainingTime, long timestamp, String userId, int maxParticipants, int currentParticipants) {
+    public DeliveryPost(String postId, String title, String remainingTime, long timestamp, String userId,
+                        int maxParticipants, int currentParticipants, boolean isActive,
+                        List<String> participantIds) {
+        this.postId = postId;
         this.title = title;
         this.remainingTime = remainingTime;
         this.timestamp = timestamp;
         this.userId = userId;
         this.maxParticipants = maxParticipants;
         this.currentParticipants = currentParticipants;
+        this.isActive = isActive;
+        this.participantIds = participantIds;
+    }
+
+    public String getPostId() { // static 제거
+        return postId;
     }
 
     public String getTitle() {
@@ -56,6 +70,20 @@ public class DeliveryPost {
     public void setCurrentParticipants(int currentParticipants) {
         this.currentParticipants = currentParticipants;
     }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public List<String> getParticipantIds() {
+        return participantIds;
+    }
+
+    public void setParticipantIds(List<String> participantIds) {
+        this.participantIds = participantIds;
+    }
 }
-
-

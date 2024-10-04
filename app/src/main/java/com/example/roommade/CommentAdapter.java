@@ -22,7 +22,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     private ReplyClickListener replyClickListener;
     private FreeBoardPost post;
     private ReplyDeleteListener replyDeleteListener;
-    private String currentUserId;  // 현재 로그인한 사용자 ID
+    private String currentUserId;
 
     public CommentAdapter(List<Comment> commentList, FreeBoardPost post, CommentDeleteListener deleteListener,
                           ReplyClickListener replyClickListener, ReplyDeleteListener replyDeleteListener,
