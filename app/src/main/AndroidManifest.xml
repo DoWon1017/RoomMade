@@ -27,7 +27,7 @@
         <activity android:name=".DeliveryBoardActivity" />
         <activity android:name=".ExerciseBoardActivity" />
         <activity android:name=".CommunityBoardActivity" />
-
+        <activity android:name=".RecyclerItemClickListener" />
 
         <activity
             android:name=".MainActivity"
