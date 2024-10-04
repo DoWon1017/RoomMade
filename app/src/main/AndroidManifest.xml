@@ -24,6 +24,10 @@
         <activity android:name=".ActivityA" />
         <activity android:name=".ActivityB" />
         <activity android:name=".ActivityC" />
+        <activity android:name=".DeliveryBoardActivity" />
+        <activity android:name=".ExerciseBoardActivity" />
+        <activity android:name=".CommunityBoardActivity" />
+
 
         <activity
             android:name=".MainActivity"
