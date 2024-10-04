@@ -65,6 +65,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             textViewContent = itemView.findViewById(R.id.textViewContent);
         }
     }
+    
 }
 
 
