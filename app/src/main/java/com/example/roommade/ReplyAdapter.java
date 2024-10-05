@@ -72,7 +72,14 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ReplyViewHol
         if (authorId.equals(post.getUserId())) {
             return "작성자";
         }
-        return anonymousMap.computeIfAbsent(authorId, k -> "익명" + (anonymousCount++));
+
+        if (anonymousMap.containsKey(authorId)) {
+            return anonymousMap.get(authorId);
+        } else {
+            String newNickname = "익명" + (anonymousCount++);
+            anonymousMap.put(authorId, newNickname);
+            return newNickname;ㅈ
+        }
     }
 
     public static class ReplyViewHolder extends RecyclerView.ViewHolder {
