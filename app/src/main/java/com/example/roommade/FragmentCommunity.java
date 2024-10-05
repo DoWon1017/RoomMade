@@ -1,19 +1,22 @@
 package com.example.roommade;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,52 +89,46 @@ public class FragmentCommunity extends Fragment {
         firestore.collection("freeboard_posts")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(3)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            FreeBoardPost post = document.toObject(FreeBoardPost.class);
-                            freeBoardPosts.add(post);
-                            Log.d("FragmentCommunity", "FreeBoardPost: " + post.getTitle());
-                        }
-                        adapterFreeBoard.notifyDataSetChanged();
-                    } else {
-                        Log.d("FragmentCommunity", "Error getting freeboard posts: ", task.getException());
+                .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                    if (e != null) {
+                        return;
                     }
+                    freeBoardPosts.clear();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        FreeBoardPost post = document.toObject(FreeBoardPost.class);
+                        freeBoardPosts.add(post);
+                    }
+                    adapterFreeBoard.notifyDataSetChanged();
                 });
 
         firestore.collection("deliveryPosts")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(3)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            DeliveryPost post = document.toObject(DeliveryPost.class);
-                            deliveryPosts.add(post);
-                            Log.d("FragmentCommunity", "DeliveryPost: " + post.getTitle());
-                        }
-                        adapterDelivery.notifyDataSetChanged();
-                    } else {
-                        Log.d("FragmentCommunity", "Error getting delivery posts: ", task.getException());
+                .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                    if (e != null) {
+                        return;
                     }
+                    deliveryPosts.clear();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        DeliveryPost post = document.toObject(DeliveryPost.class);
+                        deliveryPosts.add(post);
+                    }
+                    adapterDelivery.notifyDataSetChanged();
                 });
 
         firestore.collection("exercise_posts")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .limit(3)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            ExercisePost post = document.toObject(ExercisePost.class);
-                            exercisePosts.add(post);
-                            Log.d("FragmentCommunity", "ExercisePost: " + post.getTitle());
-                        }
-                        adapterExercise.notifyDataSetChanged();
-                    } else {
-                        Log.d("FragmentCommunity", "Error getting exercise posts: ", task.getException());
+                .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                    if (e != null) {
+                        return;
                     }
+                    exercisePosts.clear();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        ExercisePost post = document.toObject(ExercisePost.class);
+                        exercisePosts.add(post);
+                    }
+                    adapterExercise.notifyDataSetChanged();
                 });
     }
 }
