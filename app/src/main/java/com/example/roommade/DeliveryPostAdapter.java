@@ -117,9 +117,6 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
         }
     }
 
-
-
-
     private void navigateToChatRoom(DeliveryPost post, FragmentManager fragmentManager) {
         FragmentChat fragmentChat = new FragmentChat(currentUserId, post.getPostId());
 

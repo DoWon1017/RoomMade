@@ -75,12 +75,12 @@ public class FragmentChat extends Fragment {
             }
         });
 
+        ImageButton btnBack = view.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentOrderDelivery fragmentOrderDelivery = new FragmentOrderDelivery();
-                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                transaction.replace(R.id.containers, fragmentOrderDelivery);
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.containers, new FragmentOrderDelivery());
                 transaction.addToBackStack(null);
                 transaction.commit();
             }

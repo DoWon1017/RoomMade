@@ -12,7 +12,7 @@ public class DeliveryPost {
     private int maxParticipants;
     private int currentParticipants;
     private boolean isActive;
-    private List<String> participantIds; // 이 필드가 null일 수 있음
+    private List<String> participantIds;
 
     // Constructor
     public DeliveryPost(String postId, String title, String remainingTime, long timestamp,
