@@ -15,7 +15,6 @@ import android.widget.ImageButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class FragmentOrderDelivery extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_order_delivery, container, false);
-
+        db = FirebaseFirestore.getInstance();
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         ImageButton btnBack = view.findViewById(R.id.btn_back);
@@ -58,17 +57,13 @@ public class FragmentOrderDelivery extends Fragment {
             }
         });
 
-        // Firestore 초기화
-        db = FirebaseFirestore.getInstance();
-
         recyclerView = view.findViewById(R.id.recyclerViewPosts);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        // DeliveryPostAdapter 초기화
-        adapter = new DeliveryPostAdapter(getContext(), currentUserId, db);
+        adapter = new DeliveryPostAdapter(getContext(), deliveryPosts, currentUserId, db); // db를 전달
         recyclerView.setAdapter(adapter);
 
         loadDeliveryPosts();
@@ -101,12 +96,12 @@ public class FragmentOrderDelivery extends Fragment {
 
                             DeliveryPost post = new DeliveryPost(
                                     postId,
-                                    userId,
                                     title,
-                                    currentParticipants,
-                                    maxParticipants,
                                     formatRemainingTime(remainingMillis),
                                     timestamp,
+                                    userId,
+                                    maxParticipants,
+                                    currentParticipants,
                                     isActive,
                                     participantIds
                             );
