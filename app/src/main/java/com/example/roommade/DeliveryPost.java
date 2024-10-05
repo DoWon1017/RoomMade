@@ -14,7 +14,9 @@ public class DeliveryPost {
     private boolean isActive;
     private List<String> participantIds;
 
-    // Constructor
+    public DeliveryPost() {
+    }
+
     public DeliveryPost(String postId, String title, String remainingTime, long timestamp,
                         String userId, int maxParticipants, int currentParticipants,
                         boolean isActive, List<String> participantIds) {
@@ -26,7 +28,7 @@ public class DeliveryPost {
         this.maxParticipants = maxParticipants;
         this.currentParticipants = currentParticipants;
         this.isActive = isActive;
-        this.participantIds = participantIds != null ? participantIds : new ArrayList<>(); // null 체크 및 초기화
+        this.participantIds = participantIds != null ? participantIds : new ArrayList<>();
     }
 
     public String getPostId() {
@@ -87,5 +89,8 @@ public class DeliveryPost {
 
     public void setParticipantIds(List<String> participantIds) {
         this.participantIds = participantIds;
+    }
+
+    public void setStartTime(long timestamp) {
     }
 }

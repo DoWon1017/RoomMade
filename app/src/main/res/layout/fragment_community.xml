@@ -41,7 +41,23 @@
             android:text="자유게시판"
             android:backgroundTint="?attr/colorPrimary"
             android:textColor="@android:color/white"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="  최신글"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewFreeBoard"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center_horizontal"
+            android:nestedScrollingEnabled="false" />
 
         <Button
             android:id="@+id/btn_delivery"
@@ -50,7 +66,23 @@
             android:text="같이 배달시켜요"
             android:backgroundTint="?attr/colorPrimary"
             android:textColor="@android:color/white"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  최신글"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewDelivery"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center_horizontal"
+            android:nestedScrollingEnabled="false" />
 
         <Button
             android:id="@+id/btn_exercise"
@@ -59,7 +91,23 @@
             android:backgroundTint="?attr/colorPrimary"
             android:text="같이 운동해요"
             android:textColor="@android:color/white"
-            android:layout_marginBottom="20dp" />
+            android:layout_marginBottom="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="  최신글"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewExercise"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center_horizontal"
+            android:nestedScrollingEnabled="false" />
     </LinearLayout>
 
 </LinearLayout>
