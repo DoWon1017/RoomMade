@@ -78,7 +78,7 @@ public class ReplyAdapter extends RecyclerView.Adapter<ReplyAdapter.ReplyViewHol
         } else {
             String newNickname = "익명" + (anonymousCount++);
             anonymousMap.put(authorId, newNickname);
-            return newNickname;ㅈ
+            return newNickname;
         }
     }
 
