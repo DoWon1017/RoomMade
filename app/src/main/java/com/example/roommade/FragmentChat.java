@@ -1,6 +1,7 @@
 package com.example.roommade;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,8 @@ public class FragmentChat extends Fragment {
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private ListenerRegistration messageListener;
+    private String userId;
+    private List<String> participantIds = new ArrayList<>();
 
     public FragmentChat(String currentUserId, String postId) {
         this.currentUserId = currentUserId;
@@ -54,10 +57,12 @@ public class FragmentChat extends Fragment {
         editTextMessage = view.findViewById(R.id.editTextMessage);
         buttonSend = view.findViewById(R.id.buttonSend);
         btnBack = view.findViewById(R.id.btn_back);
-        adapter = new MessageAdapter(messages, currentUserId);
+
+        loadPostData();
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new MessageAdapter(getActivity(), messages, currentUserId, userId, participantIds);
         recyclerView.setAdapter(adapter);
-        loadMessagesFromFirestore();
 
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +80,6 @@ public class FragmentChat extends Fragment {
             }
         });
 
-        ImageButton btnBack = view.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,6 +91,24 @@ public class FragmentChat extends Fragment {
         });
 
         return view;
+    }
+
+    private void loadPostData() {
+        db.collection("deliveryPosts").document(postId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        userId = documentSnapshot.getString("userId");
+                        participantIds = (List<String>) documentSnapshot.get("participantIds");
+                        adapter = new MessageAdapter(getActivity(), messages, currentUserId, userId, participantIds);
+                        recyclerView.setAdapter(adapter);
+
+                        loadMessagesFromFirestore();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("FragmentChat", "Error loading post data", e);
+                });
     }
 
     private void loadMessagesFromFirestore() {

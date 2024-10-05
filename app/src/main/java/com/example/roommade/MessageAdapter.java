@@ -1,5 +1,7 @@
 package com.example.roommade;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +23,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     private List<Message> messages;
     private String currentUserId;
+    private String postUserId;
+    private List<String> participantIds;
     private String[] nicknames = {
             "사랑스러운 고양이",
             "하품하는 돌고래",
@@ -32,10 +37,50 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     private Map<String, String> userNicknames = new HashMap<>();
     private Random random = new Random();
+    private static final String PREFS_NAME = "NicknamesPrefs";
+    private static final String NICKNAME_KEY_PREFIX = "nickname_";
+    private Context context;
 
-    public MessageAdapter(List<Message> messages, String currentUserId) {
+    public MessageAdapter(Context context, List<Message> messages, String currentUserId, String postUserId, List<String> participantIds) {
+        this.context = context;
         this.messages = messages;
         this.currentUserId = currentUserId;
+        this.postUserId = postUserId;
+        this.participantIds = participantIds;
+
+        assignNicknames();
+    }
+
+    private void assignNicknames() {
+        if (participantIds == null) {
+            participantIds = new ArrayList<>();
+        }
+
+        for (String participantId : participantIds) {
+            String nickname = getNicknameFromPrefs(participantId);
+            if (nickname == null) {
+                nickname = assignRandomNickname(participantId);
+            }
+            userNicknames.put(participantId, nickname);
+        }
+    }
+
+
+    private String assignRandomNickname(String participantId) {
+        List<String> availableNicknames = new ArrayList<>();
+        for (String nickname : nicknames) {
+            if (!userNicknames.containsValue(nickname)) {
+                availableNicknames.add(nickname);
+            }
+        }
+
+        if (!availableNicknames.isEmpty()) {
+            String randomNickname = availableNicknames.remove(random.nextInt(availableNicknames.size()));
+            saveNicknameToPrefs(participantId, randomNickname);
+            return randomNickname;
+        } else {
+            return "알 수 없는 사용자";
+        }
     }
 
     @Override
@@ -69,27 +114,30 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         public void bind(Message message) {
             textViewMessage.setText(message.getMessage());
-
             SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
             String formattedTimestamp = dateFormat.format(new Date(message.getTimestamp()));
             textViewTimestamp.setText(formattedTimestamp);
 
             String senderId = message.getSenderId();
-            if (senderId.equals(currentUserId)) {
+
+            if (senderId.equals(postUserId)) {
                 textViewSenderName.setText("작성자");
-            } else {
-                if (!userNicknames.containsKey(senderId)) {
-                    String randomNickname = nicknames[random.nextInt(nicknames.length)];
-                    userNicknames.put(senderId, randomNickname);
+            } else if (participantIds.contains(senderId)) {
+                String nickname = userNicknames.get(senderId);
+                if (nickname == null) {
+                    textViewSenderName.setText("알 수 없는 사용자");
+                } else {
+                    textViewSenderName.setText(nickname);
                 }
-                textViewSenderName.setText(userNicknames.get(senderId));
+            } else {
+                textViewSenderName.setText("알 수 없는 사용자");
             }
 
             LinearLayout.LayoutParams messageParams = (LinearLayout.LayoutParams) textViewMessage.getLayoutParams();
             LinearLayout.LayoutParams timestampParams = (LinearLayout.LayoutParams) textViewTimestamp.getLayoutParams();
-            LinearLayout.LayoutParams senderNameParams = (LinearLayout.LayoutParams) textViewSenderName.getLayoutParams(); // 추가된 부분
+            LinearLayout.LayoutParams senderNameParams = (LinearLayout.LayoutParams) textViewSenderName.getLayoutParams();
 
-            if (message.getSenderId().equals(currentUserId)) {
+            if (senderId.equals(currentUserId)) {
                 textViewMessage.setBackgroundResource(R.drawable.bubble_outgoing);
                 textViewMessage.setTextColor(Color.WHITE);
                 messageParams.gravity = Gravity.END;
@@ -107,6 +155,17 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             textViewTimestamp.setLayoutParams(timestampParams);
             textViewSenderName.setLayoutParams(senderNameParams);
         }
+    }
 
+    private String getNicknameFromPrefs(String userId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(NICKNAME_KEY_PREFIX + userId, null);
+    }
+
+    private void saveNicknameToPrefs(String userId, String nickname) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(NICKNAME_KEY_PREFIX + userId, nickname);
+        editor.apply();
     }
 }
