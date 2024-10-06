@@ -67,9 +67,12 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
                 } else {
                     showConfirmationDialog(post);
                 }
+            } else {
+                showErrorDialog("모집이 종료된 채팅방입니다.");
             }
         });
     }
+
 
 
     @Override
@@ -128,6 +131,19 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
                 .addToBackStack(null)
                 .commit();
     }
+
+    private void showErrorDialog(String message) {
+        if (context != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("알림")
+                    .setMessage(message)
+                    .setPositiveButton("확인", (dialog, which) -> dialog.dismiss());
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    }
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTitle;
