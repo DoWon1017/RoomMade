@@ -48,24 +48,16 @@ public class DeliveryBoardActivity extends AppCompatActivity {
 
         // 뒤로가기 버튼 설정
         ImageButton btnBack = findViewById(R.id.btn_back);
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed(); // 이전 페이지로 돌아가기
-            }
-        });
+        btnBack.setOnClickListener(v -> onBackPressed());
 
         // 삭제하기 버튼 설정
         Button btnDelete = findViewById(R.id.btn_delivery_delete);
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 체크박스 레이아웃의 가시성 전환
-                if (checkboxLayout.getVisibility() == View.GONE) {
-                    checkboxLayout.setVisibility(View.VISIBLE); // 체크박스 보이기
-                } else {
-                    deleteSelectedPosts(); // 선택된 게시글 삭제
-                }
+        btnDelete.setOnClickListener(v -> {
+            // 체크박스 레이아웃의 가시성 전환
+            if (checkboxLayout.getVisibility() == View.GONE) {
+                checkboxLayout.setVisibility(View.VISIBLE); // 체크박스 보이기
+            } else {
+                deleteSelectedPosts(); // 선택된 게시글 삭제
             }
         });
 
@@ -138,6 +130,8 @@ public class DeliveryBoardActivity extends AppCompatActivity {
                         .delete()
                         .addOnSuccessListener(aVoid -> {
                             Toast.makeText(DeliveryBoardActivity.this, "게시글을 삭제하였습니다.", Toast.LENGTH_SHORT).show();
+                            // 체크박스 목록 초기화 및 게시글 리스트 업데이트
+                            fetchPosts(mAuth.getCurrentUser().getUid());
                         })
                         .addOnFailureListener(e -> {
                             Toast.makeText(DeliveryBoardActivity.this, "게시글 삭제를 실패하였습니다.", Toast.LENGTH_SHORT).show();
@@ -146,6 +140,9 @@ public class DeliveryBoardActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "삭제할 게시글을 선택해 주세요.", Toast.LENGTH_SHORT).show();
         }
+
+        // 체크박스 레이아웃 숨김
+        checkboxLayout.setVisibility(View.GONE);
     }
 
     @Override
