@@ -78,20 +78,35 @@ public class FragmentExercise extends Fragment {
         db.collection("exercise_posts")
                 .orderBy("timestamp", Query.Direction.DESCENDING)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            exercisePostList.clear();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                ExercisePost post = document.toObject(ExercisePost.class);
-                                if (post != null) {
-                                    exercisePostList.add(post);
-                                }
-                            }
-                            postsAdapter.notifyDataSetChanged();
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        exercisePostList.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String postId = document.getId();
+                            String title = document.getString("title");
+                            String content = document.getString("content");
+                            String userId = document.getString("userId");
+                            long timestamp = document.getLong("timestamp");
+                            int maxParticipants = document.getLong("maxParticipants").intValue();
+                            int currentParticipants = document.getLong("currentParticipants").intValue();
+                            List<String> participantIds = (List<String>) document.get("participantIds");
+
+                            ExercisePost post = new ExercisePost(
+                                    postId,
+                                    title,
+                                    content,
+                                    userId,
+                                    timestamp,
+                                    maxParticipants,
+                                    currentParticipants,
+                                    participantIds
+                            );
+
+                            exercisePostList.add(post);
                         }
+                        postsAdapter.notifyDataSetChanged();
                     }
                 });
     }
+
 }

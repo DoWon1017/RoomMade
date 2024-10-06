@@ -30,9 +30,21 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             "하품하는 돌고래",
             "슬픈 코끼리",
             "환호하는 코알라",
-            "앉아있는 원숭이",
+            "앉아 있는 원숭이",
             "요리하는 얼룩말",
-            "감시하는 강아지"
+            "감시하는 강아지",
+            "웃고 있는 팬더",
+            "춤추는 토끼",
+            "밥 먹는 햄스터",
+            "개굴개굴 개구리",
+            "자고 있는 하마",
+            "미소 짓는 펭귄",
+            "아주 빠른 거북이",
+            "여행하는 여우",
+            "책 읽는 다람쥐",
+            "걷고 있는 알파카",
+            "소리치는 사슴",
+            "손 씻는 늑대"
     };
 
     private Map<String, String> userNicknames = new HashMap<>();

@@ -149,6 +149,7 @@ public class FragmentExercisePost extends Fragment {
 
         Bundle args = new Bundle();
         args.putString("postId", post.getPostId());
+        fragmentExerciseChat.setCurrentUserId(currentUserId);  // currentUserId 전달
         fragmentExerciseChat.setArguments(args);
 
         getActivity().getSupportFragmentManager()
@@ -157,6 +158,7 @@ public class FragmentExercisePost extends Fragment {
                 .addToBackStack(null)
                 .commit();
     }
+
 
     private String formatDate(long timestamp) {
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
