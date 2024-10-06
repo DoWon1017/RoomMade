@@ -40,6 +40,7 @@ public class ExercisePostAdapter extends RecyclerView.Adapter<ExercisePostAdapte
             args.putLong("timestamp", post.getTimestamp());
             args.putInt("maxParticipants", post.getMaxParticipants());
             args.putInt("currentParticipants", post.getCurrentParticipants());
+            args.putString("postId", post.getPostId());
 
             FragmentExercisePost fragmentExercisePost = new FragmentExercisePost();
             fragmentExercisePost.setArguments(args);

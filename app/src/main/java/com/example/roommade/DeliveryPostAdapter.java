@@ -59,7 +59,6 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
 
         holder.itemView.setOnClickListener(v -> {
             if (isPostClickable(post)) {
-                // 참여자와 게시물 작성자 체크
                 List<String> participantIds = post.getParticipantIds();
                 if (post.getUserId().equals(currentUserId) || (participantIds != null && participantIds.contains(currentUserId))) {
                     if (context instanceof FragmentActivity) {

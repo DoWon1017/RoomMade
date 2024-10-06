@@ -104,7 +104,9 @@ public class FragmentWriteDeliveryPost extends Fragment {
 
                 postsRef.add(post)
                         .addOnSuccessListener(documentReference -> {
+                            String postId = documentReference.getId();
                             Toast.makeText(getActivity(), "게시글이 작성되었습니다.", Toast.LENGTH_SHORT).show();
+                            documentReference.update("postId", postId);
                             getParentFragmentManager().beginTransaction()
                                     .replace(R.id.containers, new FragmentOrderDelivery())
                                     .addToBackStack(null)
@@ -115,6 +117,7 @@ public class FragmentWriteDeliveryPost extends Fragment {
                         });
             }
         });
+
 
         return view;
     }

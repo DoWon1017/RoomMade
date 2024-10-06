@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -87,15 +88,17 @@ public class FragmentWriteExercisePost extends Fragment {
             post.put("userId", userId);
             post.put("timestamp", System.currentTimeMillis());
             post.put("maxParticipants", maxParticipants);
-            post.put("currentParticipants", 1);  // 초기 참여 인원 설정
+            post.put("currentParticipants", 1);
 
             db.collection("exercise_posts")
-                    .document()
-                    .set(post)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    .add(post)
+                    .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                         @Override
-                        public void onComplete(Task<Void> task) {
+                        public void onComplete(Task<DocumentReference> task) {
                             if (task.isSuccessful()) {
+                                DocumentReference documentReference = task.getResult();
+                                String postId = documentReference.getId();
+
                                 Toast.makeText(getActivity(), "게시글이 작성되었습니다.", Toast.LENGTH_SHORT).show();
                                 clearFields();
 
@@ -106,7 +109,8 @@ public class FragmentWriteExercisePost extends Fragment {
                                 args.putString("userId", userId);
                                 args.putLong("timestamp", System.currentTimeMillis());
                                 args.putInt("maxParticipants", maxParticipants);
-                                args.putInt("currentParticipants", 1); // 여기에서 현재 참여 인원을 전달
+                                args.putInt("currentParticipants", 1);
+                                args.putString("postId", postId);
                                 fragmentExercisePost.setArguments(args);
 
                                 getParentFragmentManager()

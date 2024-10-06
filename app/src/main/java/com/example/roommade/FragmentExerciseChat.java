@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,7 +19,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentChat extends Fragment {
+public class FragmentExerciseChat extends Fragment {
 
     private RecyclerView recyclerView;
     private MessageAdapter adapter;
@@ -36,9 +35,11 @@ public class FragmentChat extends Fragment {
     private String userId;
     private List<String> participantIds = new ArrayList<>();
 
-    public FragmentChat(String currentUserId, String postId) {
+    public FragmentExerciseChat() {
+    }
+
+    public void setCurrentUserId(String currentUserId) {
         this.currentUserId = currentUserId;
-        this.postId = postId;
     }
 
     @Override
@@ -46,6 +47,7 @@ public class FragmentChat extends Fragment {
         super.setArguments(args);
         if (args != null) {
             postId = args.getString("postId");
+            Log.d("FragmentExerciseChat", "postId set: " + postId);
         }
     }
 
@@ -64,19 +66,10 @@ public class FragmentChat extends Fragment {
         adapter = new MessageAdapter(getActivity(), messages, currentUserId, userId, participantIds);
         recyclerView.setAdapter(adapter);
 
-        buttonSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String messageText = editTextMessage.getText().toString();
-                if (!messageText.isEmpty()) {
-                    long timestamp = System.currentTimeMillis();
-                    Message message = new Message(currentUserId, messageText, timestamp);
-                    messages.add(message);
-                    adapter.notifyItemInserted(messages.size() - 1);
-                    recyclerView.scrollToPosition(messages.size() - 1);
-                    editTextMessage.setText("");
-                    sendMessageToFirestore(message);
-                }
+        buttonSend.setOnClickListener(v -> {
+            String messageText = editTextMessage.getText().toString();
+            if (!messageText.isEmpty()) {
+                sendMessage(messageText);
             }
         });
 
@@ -85,8 +78,29 @@ public class FragmentChat extends Fragment {
         return view;
     }
 
+    private void sendMessage(String messageText) {
+        if (postId == null) {
+            Log.e("FragmentExerciseChat", "postId is null. Cannot send message.");
+            return;
+        }
+
+        long timestamp = System.currentTimeMillis();
+        Message message = new Message(currentUserId, messageText, timestamp);
+        messages.add(message);
+        adapter.notifyItemInserted(messages.size() - 1);
+        recyclerView.scrollToPosition(messages.size() - 1);
+        editTextMessage.setText("");
+
+        sendExerciseMessageToFirestore(message);
+    }
+
     private void loadPostData() {
-        db.collection("deliveryPosts").document(postId)
+        if (postId == null) {
+            Log.e("FragmentExerciseChat", "postId is null when loading post data.");
+            return;
+        }
+
+        db.collection("exercise_posts").document(postId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
@@ -98,13 +112,16 @@ public class FragmentChat extends Fragment {
                         loadMessagesFromFirestore();
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Log.e("FragmentChat", "Error loading post data", e);
-                });
+                .addOnFailureListener(e -> Log.e("FragmentExerciseChat", "Error getting document: ", e));
     }
 
     private void loadMessagesFromFirestore() {
-        messageListener = db.collection("deliveryPosts")
+        if (postId == null) {
+            Log.e("FragmentExerciseChat", "postId is null when loading messages.");
+            return;
+        }
+
+        messageListener = db.collection("exercise_posts")
                 .document(postId)
                 .collection("messages")
                 .orderBy("timestamp")
@@ -127,8 +144,8 @@ public class FragmentChat extends Fragment {
                 });
     }
 
-    private void sendMessageToFirestore(Message message) {
-        db.collection("deliveryPosts")
+    private void sendExerciseMessageToFirestore(Message message) {
+        db.collection("exercise_posts")
                 .document(postId)
                 .collection("messages")
                 .add(message);
