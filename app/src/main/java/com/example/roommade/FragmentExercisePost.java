@@ -2,6 +2,7 @@ package com.example.roommade;
 
 import androidx.fragment.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,10 +58,16 @@ public class FragmentExercisePost extends Fragment {
             textViewTimestamp.setText(formatDate(exercisepost.getTimestamp()));
             textViewParticipants.setText("참여 인원: " + exercisepost.getCurrentParticipants() + "/" + exercisepost.getMaxParticipants());
 
-            updateJoinButtonState();
+            // Firestore에서 최신 참여자 목록을 가져옵니다.
+            getParticipantsFromDatabase();
 
             btnJoinChat.setOnClickListener(v -> {
-                if (exercisepost.getUserId().equals(currentUserId) || exercisepost.getParticipantIds().contains(currentUserId)) {
+                Log.d("FragmentExercisePost", "Current User ID: " + currentUserId);
+                Log.d("FragmentExercisePost", "Post User ID: " + exercisepost.getUserId());
+                Log.d("FragmentExercisePost", "Participant IDs: " + exercisepost.getParticipantIds());
+
+                if (exercisepost.getUserId().equals(currentUserId) ||
+                        exercisepost.getParticipantIds().contains(currentUserId)) {
                     navigateToChatRoom(exercisepost);
                 } else {
                     if (exercisepost.getCurrentParticipants() < exercisepost.getMaxParticipants()) {
@@ -70,6 +77,7 @@ public class FragmentExercisePost extends Fragment {
                     }
                 }
             });
+
         }
 
         ImageButton btnBack = view.findViewById(R.id.btn_back);
@@ -85,9 +93,29 @@ public class FragmentExercisePost extends Fragment {
         return view;
     }
 
+    private void getParticipantsFromDatabase() {
+        DocumentReference postRef = db.collection("exercise_posts").document(exercisepost.getPostId());
+        postRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                List<String> participantIds = (List<String>) documentSnapshot.get("participantIds");
+                int currentParticipants = documentSnapshot.getLong("currentParticipants").intValue();
+
+                exercisepost.setParticipantIds(participantIds != null ? participantIds : new ArrayList<>());
+                exercisepost.setCurrentParticipants(currentParticipants);
+
+                updateJoinButtonState();
+            }
+        });
+    }
+
     private void updateJoinButtonState() {
-        if (exercisepost.getCurrentParticipants() >= exercisepost.getMaxParticipants()) {
+        if (exercisepost.getUserId().equals(currentUserId) ||
+                exercisepost.getParticipantIds().contains(currentUserId)) {
+            btnJoinChat.setEnabled(true);
+        } else if (exercisepost.getCurrentParticipants() >= exercisepost.getMaxParticipants()) {
             btnJoinChat.setEnabled(false);
+        } else {
+            btnJoinChat.setEnabled(true);
         }
     }
 
@@ -130,7 +158,9 @@ public class FragmentExercisePost extends Fragment {
         if (participantIds == null) {
             participantIds = new ArrayList<>();
         }
-        participantIds.add(currentUserId);
+        if (!participantIds.contains(currentUserId)) {
+            participantIds.add(currentUserId);
+        }
         exercisepost.setParticipantIds(participantIds);
     }
 
@@ -157,7 +187,6 @@ public class FragmentExercisePost extends Fragment {
                 .addToBackStack(null)
                 .commit();
     }
-
 
     private String formatDate(long timestamp) {
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
