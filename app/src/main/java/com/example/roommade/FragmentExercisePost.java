@@ -22,18 +22,22 @@ public class FragmentExercisePost extends Fragment {
                     args.getString("title"),
                     args.getString("content"),
                     args.getString("userId"),
-                    args.getLong("timestamp")
+                    args.getLong("timestamp"),
+                    args.getInt("maxParticipants"),
+                    args.getInt("currentParticipants")  // 현재 참여 인원
             );
 
             TextView textViewTitle = view.findViewById(R.id.textViewExerciseTitle);
             TextView textViewContent = view.findViewById(R.id.textViewExerciseContent);
             TextView textViewAuthor = view.findViewById(R.id.textViewExerciseAuthor);
             TextView textViewTimestamp = view.findViewById(R.id.textViewExerciseTimestamp);
+            TextView textViewParticipants = view.findViewById(R.id.textViewExerciseParticipants);
 
             textViewTitle.setText(post.getTitle());
             textViewContent.setText(post.getContent());
             textViewAuthor.setText("익명");
             textViewTimestamp.setText(formatDate(post.getTimestamp()));
+            textViewParticipants.setText("참여 인원: " + post.getCurrentParticipants() + "/" + post.getMaxParticipants());
         }
 
         ImageButton btnBack = view.findViewById(R.id.btn_back);

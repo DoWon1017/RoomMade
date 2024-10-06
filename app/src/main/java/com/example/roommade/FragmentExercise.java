@@ -85,7 +85,9 @@ public class FragmentExercise extends Fragment {
                             exercisePostList.clear();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 ExercisePost post = document.toObject(ExercisePost.class);
-                                exercisePostList.add(post);
+                                if (post != null) {
+                                    exercisePostList.add(post);
+                                }
                             }
                             postsAdapter.notifyDataSetChanged();
                         }
@@ -93,6 +95,3 @@ public class FragmentExercise extends Fragment {
                 });
     }
 }
-
-
-

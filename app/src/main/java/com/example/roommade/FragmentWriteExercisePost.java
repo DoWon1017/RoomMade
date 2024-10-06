@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -48,16 +50,25 @@ public class FragmentWriteExercisePost extends Fragment {
         EditText editTextTitle = view.findViewById(R.id.editTextExerciseTitle);
         EditText editTextContent = view.findViewById(R.id.editTextExerciseContent);
 
+        Spinner spinnerParticipants = view.findViewById(R.id.spinnerExerciseParticipants);
+        String[] participantsOptions = {"2명", "3명", "4명", "5명", "6명", "7명", "8명", "9명", "10명", "11명", "12명", "13명", "14명", "15명", "16명", "17명", "18명", "19명", "20명"};
+        ArrayAdapter<String> participantsAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_spinner_item, participantsOptions);
+        participantsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerParticipants.setAdapter(participantsAdapter);
+
         btnWritePost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String title = editTextTitle.getText().toString();
                 String content = editTextContent.getText().toString();
+                String selectedParticipants = spinnerParticipants.getSelectedItem() != null ? spinnerParticipants.getSelectedItem().toString() : null;
 
-                if (title.isEmpty() || content.isEmpty()) {
-                    Toast.makeText(getActivity(), "제목과 내용을 모두 입력하세요.", Toast.LENGTH_SHORT).show();
+                if (title.isEmpty() || content.isEmpty() || selectedParticipants == null) {
+                    Toast.makeText(getActivity(), "모든 필드를 입력하세요.", Toast.LENGTH_SHORT).show();
                 } else {
-                    saveExercisePostToFirestore(title, content);
+                    int maxParticipants = Integer.parseInt(selectedParticipants.replace("명", ""));
+                    saveExercisePostToFirestore(title, content, maxParticipants);
                 }
             }
         });
@@ -65,7 +76,7 @@ public class FragmentWriteExercisePost extends Fragment {
         return view;
     }
 
-    private void saveExercisePostToFirestore(String title, String content) {
+    private void saveExercisePostToFirestore(String title, String content, int maxParticipants) {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             String userId = user.getUid();
@@ -75,6 +86,8 @@ public class FragmentWriteExercisePost extends Fragment {
             post.put("content", content);
             post.put("userId", userId);
             post.put("timestamp", System.currentTimeMillis());
+            post.put("maxParticipants", maxParticipants);
+            post.put("currentParticipants", 1);  // 초기 참여 인원 설정
 
             db.collection("exercise_posts")
                     .document()
@@ -92,6 +105,8 @@ public class FragmentWriteExercisePost extends Fragment {
                                 args.putString("content", content);
                                 args.putString("userId", userId);
                                 args.putLong("timestamp", System.currentTimeMillis());
+                                args.putInt("maxParticipants", maxParticipants);
+                                args.putInt("currentParticipants", 1); // 여기에서 현재 참여 인원을 전달
                                 fragmentExercisePost.setArguments(args);
 
                                 getParentFragmentManager()
