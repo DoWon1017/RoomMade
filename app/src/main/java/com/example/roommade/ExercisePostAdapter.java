@@ -30,6 +30,7 @@ public class ExercisePostAdapter extends RecyclerView.Adapter<ExercisePostAdapte
         ExercisePost post = exercisePostList.get(position);
         holder.textViewTitle.setText(post.getTitle());
         holder.textViewContent.setText(post.getContent());
+        holder.textViewParticipants.setText("참여 인원: " + post.getCurrentParticipants() + "/" + post.getMaxParticipants());
 
         holder.itemView.setOnClickListener(v -> {
             Bundle args = new Bundle();
@@ -37,6 +38,8 @@ public class ExercisePostAdapter extends RecyclerView.Adapter<ExercisePostAdapte
             args.putString("content", post.getContent());
             args.putString("userId", post.getUserId());
             args.putLong("timestamp", post.getTimestamp());
+            args.putInt("maxParticipants", post.getMaxParticipants());
+            args.putInt("currentParticipants", post.getCurrentParticipants());
 
             FragmentExercisePost fragmentExercisePost = new FragmentExercisePost();
             fragmentExercisePost.setArguments(args);
@@ -57,12 +60,13 @@ public class ExercisePostAdapter extends RecyclerView.Adapter<ExercisePostAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTitle;
         TextView textViewContent;
+        TextView textViewParticipants;
 
         public ViewHolder(View itemView) {
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.textViewExerciseTitle);
             textViewContent = itemView.findViewById(R.id.textViewExerciseContent);
+            textViewParticipants = itemView.findViewById(R.id.textViewExerciseParticipants);
         }
     }
 }
-
