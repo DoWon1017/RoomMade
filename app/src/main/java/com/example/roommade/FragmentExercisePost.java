@@ -44,7 +44,6 @@ public class FragmentExercisePost extends Fragment {
                     args.getStringArrayList("participantIds") != null ? args.getStringArrayList("participantIds") : new ArrayList<>()
             );
 
-            // UI 요소 설정
             TextView textViewTitle = view.findViewById(R.id.textViewExerciseTitle);
             TextView textViewContent = view.findViewById(R.id.textViewExerciseContent);
             TextView textViewAuthor = view.findViewById(R.id.textViewExerciseAuthor);
@@ -61,7 +60,7 @@ public class FragmentExercisePost extends Fragment {
             updateJoinButtonState();
 
             btnJoinChat.setOnClickListener(v -> {
-                if (exercisepost.getUserId().equals(currentUserId)) {
+                if (exercisepost.getUserId().equals(currentUserId) || exercisepost.getParticipantIds().contains(currentUserId)) {
                     navigateToChatRoom(exercisepost);
                 } else {
                     if (exercisepost.getCurrentParticipants() < exercisepost.getMaxParticipants()) {
@@ -88,7 +87,7 @@ public class FragmentExercisePost extends Fragment {
 
     private void updateJoinButtonState() {
         if (exercisepost.getCurrentParticipants() >= exercisepost.getMaxParticipants()) {
-            btnJoinChat.setEnabled(false); // 버튼 비활성화
+            btnJoinChat.setEnabled(false);
         }
     }
 
@@ -149,7 +148,7 @@ public class FragmentExercisePost extends Fragment {
 
         Bundle args = new Bundle();
         args.putString("postId", post.getPostId());
-        fragmentExerciseChat.setCurrentUserId(currentUserId);  // currentUserId 전달
+        fragmentExerciseChat.setCurrentUserId(currentUserId);
         fragmentExerciseChat.setArguments(args);
 
         getActivity().getSupportFragmentManager()

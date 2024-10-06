@@ -1,7 +1,6 @@
 package com.example.roommade;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -10,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.CollectionReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,8 +51,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     private Map<String, String> userNicknames = new HashMap<>();
     private Random random = new Random();
-    private static final String PREFS_NAME = "NicknamesPrefs";
-    private static final String NICKNAME_KEY_PREFIX = "nickname_";
+    private FirebaseFirestore db;
     private Context context;
 
     public MessageAdapter(Context context, List<Message> messages, String currentUserId, String postUserId, List<String> participantIds) {
@@ -59,6 +60,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         this.currentUserId = currentUserId;
         this.postUserId = postUserId;
         this.participantIds = participantIds;
+        this.db = FirebaseFirestore.getInstance();
 
         assignNicknames();
     }
@@ -69,14 +71,25 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         }
 
         for (String participantId : participantIds) {
-            String nickname = getNicknameFromPrefs(participantId);
-            if (nickname == null) {
-                nickname = assignRandomNickname(participantId);
-            }
-            userNicknames.put(participantId, nickname);
+            getNicknameFromFirestore(participantId);
         }
     }
 
+    private void getNicknameFromFirestore(String userId) {
+        CollectionReference nicknamesRef = db.collection("nicknames");
+        nicknamesRef.document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String nickname = documentSnapshot.getString("nickname");
+                        userNicknames.put(userId, nickname);
+                    } else {
+                        String nickname = assignRandomNickname(userId);
+                        saveNicknameToFirestore(userId, nickname);
+                    }
+                    notifyDataSetChanged();
+                });
+    }
 
     private String assignRandomNickname(String participantId) {
         List<String> availableNicknames = new ArrayList<>();
@@ -88,11 +101,19 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         if (!availableNicknames.isEmpty()) {
             String randomNickname = availableNicknames.remove(random.nextInt(availableNicknames.size()));
-            saveNicknameToPrefs(participantId, randomNickname);
+            userNicknames.put(participantId, randomNickname);
             return randomNickname;
         } else {
             return "알 수 없는 사용자";
         }
+    }
+
+    private void saveNicknameToFirestore(String userId, String nickname) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("nickname", nickname);
+
+        db.collection("nicknames").document(userId)
+                .set(data);
     }
 
     @Override
@@ -167,17 +188,5 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
             textViewTimestamp.setLayoutParams(timestampParams);
             textViewSenderName.setLayoutParams(senderNameParams);
         }
-    }
-
-    private String getNicknameFromPrefs(String userId) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(NICKNAME_KEY_PREFIX + userId, null);
-    }
-
-    private void saveNicknameToPrefs(String userId, String nickname) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(NICKNAME_KEY_PREFIX + userId, nickname);
-        editor.apply();
     }
 }
