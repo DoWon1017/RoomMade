@@ -7,13 +7,7 @@
     android:padding="8dp"
     android:gravity="center_vertical">
 
-    <!-- Checkbox to the left of the post title -->
-    <CheckBox
-        android:id="@+id/post_checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
 
-    <!-- Title of the post next to the checkbox -->
     <TextView
         android:id="@+id/textViewTitle"
         android:layout_width="0dp"

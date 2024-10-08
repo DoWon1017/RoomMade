@@ -35,7 +35,7 @@ public class FragmentFreeBoard extends Fragment {
 
         recyclerViewPosts = view.findViewById(R.id.recyclerViewPosts);
         postList = new ArrayList<>();
-        postsAdapter = new PostsAdapter(postList, this);
+        postsAdapter = new PostsAdapter(postList); // 상세 보기 관련된 부분 삭제
         recyclerViewPosts.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerViewPosts.getContext(),
@@ -93,11 +93,4 @@ public class FragmentFreeBoard extends Fragment {
                     }
                 });
     }
-
 }
-
-
-
-
-
-

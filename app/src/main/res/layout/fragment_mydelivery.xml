@@ -14,37 +14,37 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <ImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_back"
                 android:background="?attr/selectableItemBackground"
-                android:padding="8dp"
-                android:src="@drawable/ic_arrow_back" />
+                android:padding="8dp"/>
 
             <TextView
                 android:id="@+id/pageTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:paddingTop="14dp"
-                android:paddingBottom="16dp"
-                android:text="내가 쓴글"
+                android:text="배달게시판에 쓴글"
                 android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:paddingBottom="16dp"
+                android:paddingTop="14dp"/>
 
             <Button
                 android:id="@+id/btn_delivery_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#9933CC"
-                android:padding="10dp"
                 android:text="삭제하기"
                 android:textColor="#FFFFFF"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:backgroundTint="#9933CC"
+                android:padding="10dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -53,30 +53,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingTop="16dp"
-            android:visibility="visible"> <!-- 기본적으로 숨김 -->
+            android:visibility="gone"> <!-- 기본적으로 숨김 -->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <CheckBox
-                    android:id="@+id/postCheckbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                     />
-
-                <TextView
-                    android:id="@+id/postTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{post.title}"
-                    android:layout_marginStart="8dp" /> <!-- 체크박스와 제목 사이의 간격 -->
-            </LinearLayout>
-
-            <!-- 추가적인 체크박스와 제목은 같은 방식으로 여기에 추가합니다. -->
-
+            <!-- 체크박스와 제목이 나란히 배치되도록 할 예정입니다. -->
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -85,7 +64,5 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:scrollbars="vertical"/>
-
-
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
