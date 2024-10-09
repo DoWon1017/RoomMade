@@ -96,7 +96,6 @@ public class FragmentWritePost extends Fragment {
                                 getParentFragmentManager()
                                         .beginTransaction()
                                         .replace(R.id.containers, fragmentFreeBoardPost)
-                                        .addToBackStack(null)
                                         .commit();
                             } else {
                                 Toast.makeText(getActivity(), "게시글 작성에 실패했습니다.", Toast.LENGTH_SHORT).show();
