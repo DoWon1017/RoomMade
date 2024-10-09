@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class ActivityA extends AppCompatActivity {
 
-    private EditText name, grade, birthDate, location;
+    private EditText name, grade, dept, classNumber;
     private CheckBox monWedMorning, tueThuMorning;  // 체크박스 추가
     private Button apply, applyCancel;
     private FirebaseFirestore db;
@@ -37,8 +37,8 @@ public class ActivityA extends AppCompatActivity {
         // EditText 초기화
         name = findViewById(R.id.nameInput);
         grade = findViewById(R.id.gradeInput);
-        birthDate = findViewById(R.id.birthDateInput); // 생년월일 입력 EditText
-        location = findViewById(R.id.residenceInput); // 사는 지역 입력 EditText
+        dept = findViewById(R.id.deptInput);
+        classNumber = findViewById(R.id.classNoInput);
 
         // 체크박스 초기화
         monWedMorning = findViewById(R.id.monWedMorning);
@@ -72,11 +72,11 @@ public class ActivityA extends AppCompatActivity {
 
             String nameText = name.getText().toString();
             String gradeText = grade.getText().toString();
-            String birthDateText = birthDate.getText().toString();
-            String locationText = location.getText().toString();
+            String deptText = dept.getText().toString();
+            String classNumberText = classNumber.getText().toString();
 
             if (TextUtils.isEmpty(nameText) || TextUtils.isEmpty(gradeText) ||
-                    TextUtils.isEmpty(birthDateText) || TextUtils.isEmpty(locationText)) {
+                    TextUtils.isEmpty(deptText) || TextUtils.isEmpty(classNumberText)) {
                 Toast.makeText(getApplicationContext(), "모든 필드를 입력해 주세요", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -92,7 +92,7 @@ public class ActivityA extends AppCompatActivity {
             }
 
             // 데이터베이스에 저장
-            saveUserData(userId, nameText, gradeText, birthDateText, locationText);
+            saveUserData(userId, nameText, gradeText, deptText, classNumberText);
 
             //시간표 정보만 따로 passed_users에 업데이트
             saveUserData(userId, schedule);
@@ -101,12 +101,12 @@ public class ActivityA extends AppCompatActivity {
         }
     }
 
-    private void saveUserData(String userId, String nameText, String gradeText, String birthDateText, String locationText) {
+    private void saveUserData(String userId, String nameText, String gradeText, String deptText, String classNumberText) {
         Map<String, Object> userData = new HashMap<>();
         userData.put("name", nameText);
         userData.put("grade", gradeText);
-        userData.put("birthDate", birthDateText);
-        userData.put("location", locationText);
+        userData.put("dept", deptText);
+        userData.put("classNumber", classNumberText);
 
 
         db.collection("information").document(userId)
