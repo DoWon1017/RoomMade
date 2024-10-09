@@ -58,7 +58,6 @@ public class FragmentExercisePost extends Fragment {
             textViewTimestamp.setText(formatDate(exercisepost.getTimestamp()));
             textViewParticipants.setText("참여 인원: " + exercisepost.getCurrentParticipants() + "/" + exercisepost.getMaxParticipants());
 
-            // Firestore에서 최신 참여자 목록을 가져옵니다.
             getParticipantsFromDatabase();
 
             btnJoinChat.setOnClickListener(v -> {
@@ -82,12 +81,7 @@ public class FragmentExercisePost extends Fragment {
 
         ImageButton btnBack = view.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(v -> {
-            FragmentExercise fragmentExercise = new FragmentExercise();
-            getActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.containers, fragmentExercise)
-                    .addToBackStack(null)
-                    .commit();
+            getParentFragmentManager().popBackStack();
         });
 
         return view;

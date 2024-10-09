@@ -16,7 +16,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Query;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,6 @@ public class FragmentFreeBoard extends Fragment {
     private PostsAdapter postsAdapter;
     private List<FreeBoardPost> postList;
     private FirebaseFirestore db;
-    private boolean isDeleteMode = false; // 삭제 모드 상태
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,7 +65,6 @@ public class FragmentFreeBoard extends Fragment {
                     .commit();
         });
 
-
         return view;
     }
 
@@ -95,11 +92,4 @@ public class FragmentFreeBoard extends Fragment {
                     }
                 });
     }
-
 }
-
-
-
-
-
-

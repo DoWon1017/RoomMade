@@ -60,13 +60,9 @@ public class FragmentFreeBoardPost extends Fragment {
 
         ImageButton btnBack = view.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(v -> {
-            FragmentFreeBoard fragmentFreeBoard = new FragmentFreeBoard();
-            getParentFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.containers, fragmentFreeBoard)
-                    .addToBackStack(null)
-                    .commit();
+            getParentFragmentManager().popBackStack();
         });
+
 
         recyclerViewComments = view.findViewById(R.id.recyclerViewComments);
         editTextComment = view.findViewById(R.id.editTextComment);

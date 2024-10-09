@@ -62,7 +62,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="배달음식 게시판"
+            android:text="같이 배달시켜요 게시판"
             android:textSize="18sp"
             android:textColor="#333333"
             android:gravity="center_vertical" />
@@ -92,7 +92,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="운동 게시판"
+            android:text="같이 운동해요 게시판"
             android:textSize="18sp"
             android:textColor="#333333"
             android:gravity="center_vertical" />

@@ -4,6 +4,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 
@@ -12,17 +14,11 @@ import java.util.List;
 public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> {
 
     private List<FreeBoardPost> postList;
-    private FragmentFreeBoard fragmentFreeBoard;
-    private boolean isDeleteMode; // 삭제 모드 상태
+    private Fragment fragment;
 
-    public void setDeleteMode(boolean isDeleteMode) {
-        this.isDeleteMode = isDeleteMode;
-        notifyDataSetChanged(); // 상태 변경 시 RecyclerView 갱신
-    }
-
-    public PostsAdapter(List<FreeBoardPost> postList, FragmentFreeBoard fragmentFreeBoard) {
+    public PostsAdapter(List<FreeBoardPost> postList, Fragment fragment) {
         this.postList = postList;
-        this.fragmentFreeBoard = fragmentFreeBoard;
+        this.fragment = fragment;
     }
 
     @Override
@@ -48,7 +44,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             FragmentFreeBoardPost fragmentFreeBoardPost = new FragmentFreeBoardPost();
             fragmentFreeBoardPost.setArguments(args);
 
-            fragmentFreeBoard.getParentFragmentManager()
+            fragment.getParentFragmentManager()
                     .beginTransaction()
                     .replace(R.id.containers, fragmentFreeBoardPost)
                     .addToBackStack(null)

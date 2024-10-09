@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.fragment.app.Fragment;
 
 public class FragmentMypage extends Fragment {
@@ -32,12 +32,15 @@ public class FragmentMypage extends Fragment {
             startActivity(intent);
         });
 
-        view.findViewById(R.id.communityButton).setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), ActivityC.class);
-            startActivity(intent);
+        AppCompatImageButton button = view.findViewById(R.id.communityButton);
+        button.setOnClickListener(v -> {
+            FragmentC fragmentC = new FragmentC();
+            getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.containers, fragmentC)
+                    .addToBackStack(null)
+                    .commit();
         });
-
-
 
         return view;
     }

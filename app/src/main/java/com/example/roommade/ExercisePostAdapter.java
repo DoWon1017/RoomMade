@@ -4,6 +4,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 
@@ -12,11 +14,11 @@ import java.util.List;
 public class ExercisePostAdapter extends RecyclerView.Adapter<ExercisePostAdapter.ViewHolder> {
 
     private List<ExercisePost> exercisePostList;
-    private FragmentExercise fragmentExercise;
+    private Fragment fragment;
 
-    public ExercisePostAdapter(List<ExercisePost> postList, FragmentExercise fragmentExercise) {
+    public ExercisePostAdapter(List<ExercisePost> postList, Fragment fragment) {
         this.exercisePostList = postList;
-        this.fragmentExercise = fragmentExercise;
+        this.fragment = fragment;
     }
 
     @Override
@@ -45,7 +47,7 @@ public class ExercisePostAdapter extends RecyclerView.Adapter<ExercisePostAdapte
             FragmentExercisePost fragmentExercisePost = new FragmentExercisePost();
             fragmentExercisePost.setArguments(args);
 
-            fragmentExercise.getParentFragmentManager()
+            fragment.getParentFragmentManager()
                     .beginTransaction()
                     .replace(R.id.containers, fragmentExercisePost)
                     .addToBackStack(null)

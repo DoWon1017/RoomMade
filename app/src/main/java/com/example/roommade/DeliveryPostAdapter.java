@@ -28,10 +28,6 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
         this.deliveryPostList = deliveryPostList;
         this.currentUserId = currentUserId;
         this.db = db;
-
-        if (this.db == null) {
-            throw new IllegalArgumentException("FirebaseFirestore instance cannot be null");
-        }
     }
 
     @Override
