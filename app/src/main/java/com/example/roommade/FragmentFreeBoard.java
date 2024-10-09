@@ -26,6 +26,7 @@ public class FragmentFreeBoard extends Fragment {
     private PostsAdapter postsAdapter;
     private List<FreeBoardPost> postList;
     private FirebaseFirestore db;
+    private boolean isDeleteMode = false; // 삭제 모드 상태
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,7 +36,7 @@ public class FragmentFreeBoard extends Fragment {
 
         recyclerViewPosts = view.findViewById(R.id.recyclerViewPosts);
         postList = new ArrayList<>();
-        postsAdapter = new PostsAdapter(postList); // 상세 보기 관련된 부분 삭제
+        postsAdapter = new PostsAdapter(postList, this);
         recyclerViewPosts.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerViewPosts.getContext(),
@@ -66,6 +67,7 @@ public class FragmentFreeBoard extends Fragment {
                     .commit();
         });
 
+
         return view;
     }
 
@@ -93,4 +95,11 @@ public class FragmentFreeBoard extends Fragment {
                     }
                 });
     }
+
 }
+
+
+
+
+
+

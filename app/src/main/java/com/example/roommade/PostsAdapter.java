@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
+import android.os.Bundle;
 
 import java.util.List;
 
@@ -12,10 +13,16 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
 
     private List<FreeBoardPost> postList;
     private FragmentFreeBoard fragmentFreeBoard;
+    private boolean isDeleteMode; // 삭제 모드 상태
 
-    // 생성자에서 fragmentFreeBoard 인자 제거
-    public PostsAdapter(List<FreeBoardPost> postList) {
+    public void setDeleteMode(boolean isDeleteMode) {
+        this.isDeleteMode = isDeleteMode;
+        notifyDataSetChanged(); // 상태 변경 시 RecyclerView 갱신
+    }
+
+    public PostsAdapter(List<FreeBoardPost> postList, FragmentFreeBoard fragmentFreeBoard) {
         this.postList = postList;
+        this.fragmentFreeBoard = fragmentFreeBoard;
     }
 
     @Override
@@ -29,6 +36,24 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
         FreeBoardPost post = postList.get(position);
         holder.textViewTitle.setText(post.getTitle());
         holder.textViewContent.setText(post.getContent());
+
+        holder.itemView.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+            args.putString("postId", post.getPostId());
+            args.putString("title", post.getTitle());
+            args.putString("content", post.getContent());
+            args.putString("userId", post.getUserId());
+            args.putLong("timestamp", post.getTimestamp());
+
+            FragmentFreeBoardPost fragmentFreeBoardPost = new FragmentFreeBoardPost();
+            fragmentFreeBoardPost.setArguments(args);
+
+            fragmentFreeBoard.getParentFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.containers, fragmentFreeBoardPost)
+                    .addToBackStack(null)
+                    .commit();
+        });
     }
 
     @Override
@@ -46,4 +71,5 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             textViewContent = itemView.findViewById(R.id.textViewContent);
         }
     }
+
 }
