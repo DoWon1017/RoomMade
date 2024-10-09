@@ -1,16 +1,20 @@
 package com.example.roommade;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,7 +27,10 @@ public class FragmentMyDeliveryPost extends Fragment {
     private RecyclerView recyclerView;
     private DeliveryPostAdapter deliveryPostsAdapter;
     private List<DeliveryPost> deliveryPosts;
+    private Button btnDelete;
+    private boolean isDeleteMode = false;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_mydelivery, container, false);
@@ -33,6 +40,7 @@ public class FragmentMyDeliveryPost extends Fragment {
             getActivity().getSupportFragmentManager().popBackStack();
         });
 
+        btnDelete = view.findViewById(R.id.btn_delivery_delete);
         recyclerView = view.findViewById(R.id.recyclerViewPosts);
         deliveryPosts = new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -41,11 +49,23 @@ public class FragmentMyDeliveryPost extends Fragment {
                 LinearLayoutManager.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        // 어댑터 설정
-        deliveryPostsAdapter = new DeliveryPostAdapter(getContext(), deliveryPosts, FirebaseAuth.getInstance().getCurrentUser().getUid(), FirebaseFirestore.getInstance());
-        recyclerView.setAdapter(deliveryPostsAdapter);
-
         loadDeliveryPosts();
+
+        btnDelete.setOnClickListener(v -> {
+            if (!isDeleteMode) {
+                isDeleteMode = true;
+                btnDelete.setText("삭제하기");
+
+                deliveryPostsAdapter.setDeleteMode(true);
+            } else {
+                List<DeliveryPost> selectedPosts = deliveryPostsAdapter.getSelectedPosts();
+                if (selectedPosts.isEmpty()) {
+                    Toast.makeText(getActivity(), "게시글을 삭제하려면 체크박스를 체크하세요.", Toast.LENGTH_SHORT).show();
+                } else {
+                    deleteSelectedPosts(selectedPosts);
+                }
+            }
+        });
 
         return view;
     }
@@ -93,11 +113,36 @@ public class FragmentMyDeliveryPost extends Fragment {
 
                         deliveryPosts.sort((p1, p2) -> Long.compare(p2.getTimestamp(), p1.getTimestamp()));
 
+                        deliveryPostsAdapter = new DeliveryPostAdapter(getContext(), deliveryPosts, FirebaseAuth.getInstance().getCurrentUser().getUid(), FirebaseFirestore.getInstance());
+                        recyclerView.setAdapter(deliveryPostsAdapter);
                         deliveryPostsAdapter.notifyDataSetChanged();
-
                     }
                 });
     }
+
+    private void deleteSelectedPosts(List<DeliveryPost> selectedPosts) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String currentUserId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
+
+        for (DeliveryPost post : selectedPosts) {
+            if (post.getUserId().equals(currentUserId)) {
+                db.collection("deliveryPosts").document(post.getPostId())
+                        .delete()
+                        .addOnSuccessListener(aVoid -> {
+                            Toast.makeText(getActivity(), "게시글 삭제 완료", Toast.LENGTH_SHORT).show();
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(getActivity(), "게시글 삭제 실패", Toast.LENGTH_SHORT).show();
+                        });
+            }
+        }
+
+        isDeleteMode = false;
+        btnDelete.setText("삭제");
+        loadDeliveryPosts();
+    }
+
 
     private void updateRemainingTime(DeliveryPost post, long startTime, String remainingTime) {
         Handler handler = new Handler();

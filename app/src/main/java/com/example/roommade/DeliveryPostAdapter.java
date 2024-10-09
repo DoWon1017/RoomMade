@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
@@ -22,12 +23,18 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
     private Context context;
     private String currentUserId;
     private FirebaseFirestore db;
+    private List<Boolean> checkedItems;
+    private boolean isDeleteMode = false; // 삭제 모드 상태
 
     public DeliveryPostAdapter(Context context, List<DeliveryPost> deliveryPostList, String currentUserId, FirebaseFirestore db) {
         this.context = context;
         this.deliveryPostList = deliveryPostList;
         this.currentUserId = currentUserId;
         this.db = db;
+        checkedItems = new ArrayList<>();
+        for (int i = 0; i < deliveryPostList.size(); i++) {
+            checkedItems.add(false);
+        }
     }
 
     @Override
@@ -43,7 +50,6 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
         return isActiveAndNotFull || post.getUserId().equals(currentUserId) || isParticipant;
     }
 
-
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         DeliveryPost post = deliveryPostList.get(position);
@@ -52,6 +58,19 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
 
         String participantsText = post.getCurrentParticipants() + "/" + post.getMaxParticipants();
         holder.textViewParticipants.setText(participantsText);
+
+        if (isDeleteMode) {
+            holder.checkBoxDeliveryTitle.setVisibility(View.VISIBLE);
+            holder.checkBoxDeliveryTitle.setChecked(checkedItems.get(position));
+        } else {
+            holder.checkBoxDeliveryTitle.setVisibility(View.GONE);
+        }
+
+        holder.checkBoxDeliveryTitle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isDeleteMode) {
+                checkedItems.set(position, isChecked);
+            }
+        });
 
         holder.itemView.setOnClickListener(v -> {
             if (isPostClickable(post)) {
@@ -69,11 +88,24 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
         });
     }
 
-
-
     @Override
     public int getItemCount() {
         return deliveryPostList.size();
+    }
+
+    public List<DeliveryPost> getSelectedPosts() {
+        List<DeliveryPost> selectedPosts = new ArrayList<>();
+        for (int i = 0; i < deliveryPostList.size(); i++) {
+            if (checkedItems.get(i)) {
+                selectedPosts.add(deliveryPostList.get(i));
+            }
+        }
+        return selectedPosts;
+    }
+
+    public void setDeleteMode(boolean isDeleteMode) {
+        this.isDeleteMode = isDeleteMode;
+        notifyDataSetChanged();
     }
 
     private void showConfirmationDialog(DeliveryPost post) {
@@ -140,17 +172,18 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
         }
     }
 
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTitle;
         TextView textViewRemainingTime;
         TextView textViewParticipants;
+        CheckBox checkBoxDeliveryTitle;
 
         public ViewHolder(View itemView) {
             super(itemView);
             textViewTitle = itemView.findViewById(R.id.textViewDeliveryTitle);
             textViewRemainingTime = itemView.findViewById(R.id.textViewRemainingTime);
             textViewParticipants = itemView.findViewById(R.id.textViewParticipants);
+            checkBoxDeliveryTitle = itemView.findViewById(R.id.checkBoxDeliveryTitle);
         }
     }
 }

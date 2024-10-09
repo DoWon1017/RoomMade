@@ -1,10 +1,13 @@
 package com.example.roommade;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,9 +21,11 @@ import java.util.List;
 public class FragmentMyCommunityPost extends Fragment {
 
     private RecyclerView recyclerView;
-    private PostsAdapter postsAdapter;
     private List<FreeBoardPost> postList;
+    private Button btnDelete;
+    private boolean isDeleteMode = false;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_myfreeboard, container, false);
@@ -29,6 +34,8 @@ public class FragmentMyCommunityPost extends Fragment {
         btnBack.setOnClickListener(v -> {
             getActivity().getSupportFragmentManager().popBackStack();
         });
+
+        btnDelete = view.findViewById(R.id.btn_free_delete);
 
         recyclerView = view.findViewById(R.id.recyclerViewPosts);
         postList = new ArrayList<>();
@@ -39,6 +46,21 @@ public class FragmentMyCommunityPost extends Fragment {
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         loadPosts();
+
+        btnDelete.setOnClickListener(v -> {
+            if (!isDeleteMode) {
+                isDeleteMode = true;
+                btnDelete.setText("삭제하기");
+                ((PostsAdapter) recyclerView.getAdapter()).setDeleteMode(true);
+            } else {
+                List<FreeBoardPost> selectedPosts = ((PostsAdapter) recyclerView.getAdapter()).getSelectedPosts();
+                if (selectedPosts.isEmpty()) {
+                    Toast.makeText(getActivity(), "게시글을 삭제하려면 체크박스를 체크하세요.", Toast.LENGTH_SHORT).show();
+                } else {
+                    deleteSelectedPosts(selectedPosts);
+                }
+            }
+        });
 
         return view;
     }
@@ -66,11 +88,31 @@ public class FragmentMyCommunityPost extends Fragment {
                         }
 
                         postList.sort((p1, p2) -> Long.compare(p2.getTimestamp(), p1.getTimestamp()));
-
-                        postsAdapter = new PostsAdapter(postList, this);
-                        recyclerView.setAdapter(postsAdapter);
-                        postsAdapter.notifyDataSetChanged();
+                        recyclerView.setAdapter(new PostsAdapter(postList, this));
                     }
                 });
+    }
+
+    private void deleteSelectedPosts(List<FreeBoardPost> selectedPosts) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String currentUserId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
+
+        for (FreeBoardPost post : selectedPosts) {
+            if (post.getUserId().equals(currentUserId)) {
+                db.collection("freeboard_posts").document(post.getPostId())
+                        .delete()
+                        .addOnSuccessListener(aVoid -> {
+                            Toast.makeText(getActivity(), "게시글 삭제 완료", Toast.LENGTH_SHORT).show();
+                        })
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(getActivity(), "게시글 삭제 실패", Toast.LENGTH_SHORT).show();
+                        });
+            }
+        }
+
+        isDeleteMode = false;
+        btnDelete.setText("삭제");
+        loadPosts();
     }
 }

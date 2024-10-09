@@ -10,16 +10,33 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <TextView
-            android:id="@+id/textViewExerciseTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="제목"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:paddingBottom="2dp" />
+            android:orientation="horizontal"
+            android:layout_gravity="end"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/textViewExerciseTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="제목"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingBottom="2dp"
+                android:layout_weight="1" />
+
+            <CheckBox
+                android:id="@+id/checkBoxExerciseTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:visibility="gone"/>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textViewExerciseContent"
