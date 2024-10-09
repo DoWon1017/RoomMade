@@ -19,6 +19,36 @@
         android:layout_marginBottom="30dp"
         android:layout_gravity="center" />
 
+    <!-- 커뮤니티 게시판 섹션 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:id="@+id/communityBoardTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="자유 게시판"
+            android:textSize="18sp"
+            android:textColor="#333333"
+            android:gravity="center_vertical" />
+
+        <Button
+            android:id="@+id/communityBoardButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="조회하기"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:backgroundTint="#9933CC"
+            android:padding="10dp"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
     <!-- 배달음식 게시판 섹션 -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -79,35 +109,6 @@
             android:layout_gravity="center" />
     </LinearLayout>
 
-    <!-- 커뮤니티 게시판 섹션 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp">
-
-        <TextView
-            android:id="@+id/communityBoardTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="자유 게시판"
-            android:textSize="18sp"
-            android:textColor="#333333"
-            android:gravity="center_vertical" />
-
-        <Button
-            android:id="@+id/communityBoardButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="조회하기"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:backgroundTint="#9933CC"
-            android:padding="10dp"
-            android:layout_gravity="center" />
-    </LinearLayout>
 
     <!-- RecyclerView 추가 -->
     <androidx.recyclerview.widget.RecyclerView
