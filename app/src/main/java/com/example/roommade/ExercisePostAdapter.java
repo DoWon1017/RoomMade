@@ -1,14 +1,17 @@
 package com.example.roommade;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
-import android.os.Bundle;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +22,13 @@ public class ExercisePostAdapter extends RecyclerView.Adapter<ExercisePostAdapte
     private Fragment fragment;
     private List<Boolean> checkedItems;
     private boolean isDeleteMode = false;
+    private String currentUserId;
 
-    public ExercisePostAdapter(List<ExercisePost> postList, Fragment fragment) {
+    // 생성자에서 currentUserId 전달받음
+    public ExercisePostAdapter(List<ExercisePost> postList, Fragment fragment, String currentUserId) {
         this.exercisePostList = postList;
         this.fragment = fragment;
+        this.currentUserId = currentUserId;
         checkedItems = new ArrayList<>();
         for (int i = 0; i < postList.size(); i++) {
             checkedItems.add(false);
@@ -42,6 +48,7 @@ public class ExercisePostAdapter extends RecyclerView.Adapter<ExercisePostAdapte
         holder.textViewContent.setText(post.getContent());
         holder.textViewParticipants.setText("참여 인원: " + post.getCurrentParticipants() + "/" + post.getMaxParticipants());
 
+        // 체크 박스 처리
         if (isDeleteMode) {
             holder.checkBoxExerciseTitle.setVisibility(View.VISIBLE);
             holder.checkBoxExerciseTitle.setChecked(checkedItems.get(position));
@@ -54,6 +61,16 @@ public class ExercisePostAdapter extends RecyclerView.Adapter<ExercisePostAdapte
                 checkedItems.set(position, isChecked);
             }
         });
+
+        // buttonShortcutJoinChat 표시
+        if (post.getUserId().equals(currentUserId) || (post.getParticipantIds() != null && post.getParticipantIds().contains(currentUserId))) {
+            holder.buttonShortcutJoinChat.setVisibility(View.VISIBLE);
+            holder.buttonShortcutJoinChat.setOnClickListener(v -> {
+                navigateToChatRoom(post);
+            });
+        } else {
+            holder.buttonShortcutJoinChat.setVisibility(View.GONE);
+        }
 
         holder.itemView.setOnClickListener(v -> {
             Bundle args = new Bundle();
@@ -81,6 +98,23 @@ public class ExercisePostAdapter extends RecyclerView.Adapter<ExercisePostAdapte
         return exercisePostList.size();
     }
 
+    // 채팅방으로 이동하는 메소드
+    private void navigateToChatRoom(ExercisePost post) {
+        FragmentExerciseChat fragmentExerciseChat = new FragmentExerciseChat();
+
+        Bundle args = new Bundle();
+        args.putString("postId", post.getPostId());
+        fragmentExerciseChat.setCurrentUserId(currentUserId);
+        fragmentExerciseChat.setArguments(args);
+
+        fragment.getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.containers, fragmentExerciseChat)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    // 선택된 게시글 목록 가져오기
     public List<ExercisePost> getSelectedPosts() {
         List<ExercisePost> selectedPosts = new ArrayList<>();
         for (int i = 0; i < exercisePostList.size(); i++) {
@@ -91,6 +125,7 @@ public class ExercisePostAdapter extends RecyclerView.Adapter<ExercisePostAdapte
         return selectedPosts;
     }
 
+    // 삭제 모드 설정 메소드
     public void setDeleteMode(boolean isDeleteMode) {
         this.isDeleteMode = isDeleteMode;
         notifyDataSetChanged();
@@ -101,6 +136,7 @@ public class ExercisePostAdapter extends RecyclerView.Adapter<ExercisePostAdapte
         TextView textViewContent;
         TextView textViewParticipants;
         CheckBox checkBoxExerciseTitle;
+        Button buttonShortcutJoinChat;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -108,6 +144,7 @@ public class ExercisePostAdapter extends RecyclerView.Adapter<ExercisePostAdapte
             textViewContent = itemView.findViewById(R.id.textViewExerciseContent);
             textViewParticipants = itemView.findViewById(R.id.textViewExerciseParticipants);
             checkBoxExerciseTitle = itemView.findViewById(R.id.checkBoxExerciseTitle);
+            buttonShortcutJoinChat = itemView.findViewById(R.id.buttonShortcutJoinChat);
         }
     }
 }

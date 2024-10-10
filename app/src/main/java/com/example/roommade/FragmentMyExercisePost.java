@@ -103,7 +103,7 @@ public class FragmentMyExercisePost extends Fragment {
 
                         exercisePostList.sort((p1, p2) -> Long.compare(p2.getTimestamp(), p1.getTimestamp()));
 
-                        exercisePostsAdapter = new ExercisePostAdapter(exercisePostList, this);
+                        exercisePostsAdapter = new ExercisePostAdapter(exercisePostList, this, currentUserId);
                         recyclerView.setAdapter(exercisePostsAdapter);
                         exercisePostsAdapter.notifyDataSetChanged();
                     }

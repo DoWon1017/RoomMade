@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
@@ -24,7 +25,7 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
     private String currentUserId;
     private FirebaseFirestore db;
     private List<Boolean> checkedItems;
-    private boolean isDeleteMode = false; // 삭제 모드 상태
+    private boolean isDeleteMode = false;
 
     public DeliveryPostAdapter(Context context, List<DeliveryPost> deliveryPostList, String currentUserId, FirebaseFirestore db) {
         this.context = context;
@@ -59,6 +60,7 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
         String participantsText = post.getCurrentParticipants() + "/" + post.getMaxParticipants();
         holder.textViewParticipants.setText(participantsText);
 
+        // 체크박스 처리
         if (isDeleteMode) {
             holder.checkBoxDeliveryTitle.setVisibility(View.VISIBLE);
             holder.checkBoxDeliveryTitle.setChecked(checkedItems.get(position));
@@ -72,9 +74,18 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
             }
         });
 
+        // 참여자이거나 작성자인 경우 채팅방 참여 버튼 표시
+        List<String> participantIds = post.getParticipantIds();
+        if (post.getUserId().equals(currentUserId) || (participantIds != null && participantIds.contains(currentUserId))) {
+            holder.buttonJoinChat.setVisibility(View.VISIBLE);
+            holder.buttonJoinChat.setOnClickListener(v -> navigateToChatRoom(post, ((FragmentActivity) context).getSupportFragmentManager()));
+        } else {
+            holder.buttonJoinChat.setVisibility(View.GONE);
+        }
+
+        // 게시물 클릭 시 처리
         holder.itemView.setOnClickListener(v -> {
             if (isPostClickable(post)) {
-                List<String> participantIds = post.getParticipantIds();
                 if (post.getUserId().equals(currentUserId) || (participantIds != null && participantIds.contains(currentUserId))) {
                     if (context instanceof FragmentActivity) {
                         navigateToChatRoom(post, ((FragmentActivity) context).getSupportFragmentManager());
@@ -177,6 +188,7 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
         TextView textViewRemainingTime;
         TextView textViewParticipants;
         CheckBox checkBoxDeliveryTitle;
+        Button buttonJoinChat;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -184,6 +196,7 @@ public class DeliveryPostAdapter extends RecyclerView.Adapter<DeliveryPostAdapte
             textViewRemainingTime = itemView.findViewById(R.id.textViewRemainingTime);
             textViewParticipants = itemView.findViewById(R.id.textViewParticipants);
             checkBoxDeliveryTitle = itemView.findViewById(R.id.checkBoxDeliveryTitle);
+            buttonJoinChat = itemView.findViewById(R.id.buttonJoinChat);
         }
     }
 }

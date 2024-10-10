@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -34,7 +35,8 @@ public class FragmentExercise extends Fragment {
 
         recyclerViewPosts = view.findViewById(R.id.recyclerViewPosts);
         exercisePostList = new ArrayList<>();
-        postsAdapter = new ExercisePostAdapter(exercisePostList, this);
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        postsAdapter = new ExercisePostAdapter(exercisePostList, this, currentUserId);
         recyclerViewPosts.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerViewPosts.getContext(),
