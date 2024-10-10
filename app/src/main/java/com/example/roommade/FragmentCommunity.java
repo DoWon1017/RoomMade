@@ -23,7 +23,6 @@ import java.util.List;
 
 public class FragmentCommunity extends Fragment {
 
-    private Button btnNotice;
     private Button btnFreeBoard;
     private Button btnOrderDelivery;
     private Button btnExercise;
@@ -41,7 +40,6 @@ public class FragmentCommunity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_community, container, false);
 
-        btnNotice = view.findViewById(R.id.btn_notice);
         btnFreeBoard = view.findViewById(R.id.btn_free_board);
         btnOrderDelivery = view.findViewById(R.id.btn_delivery);
         btnExercise = view.findViewById(R.id.btn_exercise);
@@ -67,7 +65,6 @@ public class FragmentCommunity extends Fragment {
 
         loadLatestPosts();
 
-        btnNotice.setOnClickListener(v -> replaceFragment(new FragmentNotice()));
         btnFreeBoard.setOnClickListener(v -> replaceFragment(new FragmentFreeBoard()));
         btnOrderDelivery.setOnClickListener(v -> replaceFragment(new FragmentOrderDelivery()));
         btnExercise.setOnClickListener(v -> replaceFragment(new FragmentExercise()));

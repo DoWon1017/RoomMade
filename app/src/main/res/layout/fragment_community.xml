@@ -26,15 +26,6 @@
         android:padding="16dp">
 
         <Button
-            android:id="@+id/btn_notice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="공지사항"
-            android:backgroundTint="?attr/colorPrimary"
-            android:textColor="@android:color/white"
-            android:layout_marginBottom="20dp" />
-
-        <Button
             android:id="@+id/btn_free_board"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
