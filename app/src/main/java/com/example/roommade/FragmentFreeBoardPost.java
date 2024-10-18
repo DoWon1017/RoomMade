@@ -1,8 +1,8 @@
 package com.example.roommade;
 
 import androidx.fragment.app.Fragment;
-import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +11,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +39,7 @@ public class FragmentFreeBoardPost extends Fragment {
     private String postId;
     private String postUserId;
     private String currentUserId;
+    private ImageView imageViewPost;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -47,16 +53,25 @@ public class FragmentFreeBoardPost extends Fragment {
         if (args != null) {
             postId = args.getString("postId");
             postUserId = args.getString("userId");
+            String title = args.getString("title");
+            String content = args.getString("content");
+            long timestamp = args.getLong("timestamp");
+            String imageUrl = args.getString("imageUrl");
+            Log.d("FragmentFreeBoardPost", "ImageUrl: " + imageUrl);
             post = new FreeBoardPost(
-                    args.getString("title"),
-                    args.getString("content"),
+                    title,
+                    content,
                     postUserId,
-                    args.getLong("timestamp"),
-                    postId
+                    timestamp,
+                    postId,
+                    imageUrl
             );
 
             setupPostViews(view);
+        } else {
+            Log.d("FragmentFreeBoardPost", "Arguments are null");
         }
+
 
         ImageButton btnBack = view.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(v -> {
@@ -92,11 +107,31 @@ public class FragmentFreeBoardPost extends Fragment {
         TextView textViewContent = view.findViewById(R.id.textViewContent);
         TextView textViewAuthor = view.findViewById(R.id.textViewAuthor);
         TextView textViewTimestamp = view.findViewById(R.id.textViewTimestamp);
+        imageViewPost = view.findViewById(R.id.imageViewPost);
 
         textViewTitle.setText(post.getTitle());
         textViewContent.setText(post.getContent());
         textViewAuthor.setText("익명");
         textViewTimestamp.setText(formatDate(post.getTimestamp()));
+
+        if (post.getImageUrl() != null && !post.getImageUrl().isEmpty()) {
+            imageViewPost.setVisibility(View.VISIBLE); // 이미지 뷰를 보이게 설정
+            loadPostImage(post.getImageUrl()); // 이미지 로드
+        } else {
+            imageViewPost.setVisibility(View.GONE); // 이미지가 없으면 이미지 뷰 숨김
+        }
+    }
+
+
+    private void loadPostImage(String imageUrl) {
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Glide.with(this)
+                    .load(imageUrl)
+                    .into(imageViewPost);
+            Log.d("Image Load", "Loading image from URL: " + imageUrl);
+        } else {
+            Log.d("Image Load", "Image URL is null or empty");
+        }
     }
 
     private void loadComments() {

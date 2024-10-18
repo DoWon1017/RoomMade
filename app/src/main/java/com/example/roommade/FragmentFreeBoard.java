@@ -1,6 +1,7 @@
 package com.example.roommade;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,15 +77,16 @@ public class FragmentFreeBoard extends Fragment {
                     @Override
                     public void onComplete(Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            postList.clear();
+                            postList.clear(); // 기존 리스트를 비움
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String postId = document.getId();
                                 String title = document.getString("title");
                                 String content = document.getString("content");
                                 String userId = document.getString("userId");
                                 long timestamp = document.getLong("timestamp");
+                                String imageUrl = document.getString("imageUrl");
 
-                                FreeBoardPost post = new FreeBoardPost(title, content, userId, timestamp, postId);
+                                FreeBoardPost post = new FreeBoardPost(title, content, userId, timestamp, postId, imageUrl);
                                 postList.add(post);
                             }
                             postsAdapter.notifyDataSetChanged();
@@ -92,4 +94,6 @@ public class FragmentFreeBoard extends Fragment {
                     }
                 });
     }
+
+
 }

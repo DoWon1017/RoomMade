@@ -60,6 +60,7 @@ public class PostsAdapter extends RecyclerView.Adapter<PostsAdapter.ViewHolder> 
             args.putString("content", post.getContent());
             args.putString("userId", post.getUserId());
             args.putLong("timestamp", post.getTimestamp());
+            args.putString("imageUrl", post.getImageUrl());
 
             FragmentFreeBoardPost fragmentFreeBoardPost = new FragmentFreeBoardPost();
             fragmentFreeBoardPost.setArguments(args);

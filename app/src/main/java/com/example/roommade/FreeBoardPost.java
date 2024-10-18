@@ -6,7 +6,7 @@ public class FreeBoardPost {
     private String userId;
     private long timestamp;
     private String postId;
-    private boolean isSelected = false; // 체크박스 상태 저장
+    private String imageUrl;
 
     // 기본 생성자 (매개변수 없음)
     public FreeBoardPost() {
@@ -14,12 +14,13 @@ public class FreeBoardPost {
     }
 
     // 생성자
-    public FreeBoardPost(String title, String content, String userId, long timestamp, String postId) {
+    public FreeBoardPost(String title, String content, String userId, long timestamp, String postId, String imageUrl) {
         this.title = title;
         this.content = content;
         this.userId = userId;
         this.timestamp = timestamp;
         this.postId = postId;
+        this.imageUrl = imageUrl;
     }
 
     // Getter 메서드
@@ -43,4 +44,7 @@ public class FreeBoardPost {
         return postId;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
 }

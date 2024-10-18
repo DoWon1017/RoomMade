@@ -82,8 +82,9 @@ public class FragmentMyCommunityPost extends Fragment {
                             String content = document.getString("content");
                             String userId = document.getString("userId");
                             long timestamp = document.getLong("timestamp");
+                            String imageUrl = document.getString("imageUrl"); // 이미지 URL 추가
 
-                            FreeBoardPost post = new FreeBoardPost(title, content, userId, timestamp, postId);
+                            FreeBoardPost post = new FreeBoardPost(title, content, userId, timestamp, postId, imageUrl); // 생성자 수정
                             postList.add(post);
                         }
 
@@ -92,6 +93,7 @@ public class FragmentMyCommunityPost extends Fragment {
                     }
                 });
     }
+
 
     private void deleteSelectedPosts(List<FreeBoardPost> selectedPosts) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
