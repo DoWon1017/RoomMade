@@ -396,15 +396,41 @@ public class FragmentHome extends Fragment {
     }
 
     private void showRoomAssignments(List<List<UserScore>> rooms) {
-        StringBuilder message = new StringBuilder("방 배정 결과:\n");
+        // 현재 로그인한 사용자 가져오기
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser == null) {
+            Toast.makeText(getContext(), "로그인한 사용자가 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String currentUserId = currentUser.getUid();
+        StringBuilder message = new StringBuilder();
+
+        // 사용자가 속한 방만 보여주기
         for (int i = 0; i < rooms.size(); i++) {
-            message.append("방 번호 ").append(i + 1).append(": ");
-            for (UserScore user : rooms.get(i)) {
-                message.append(user.getName()).append(", ");
+            List<UserScore> room = rooms.get(i);
+            for (UserScore user : room) {
+                if (user.getUserId().equals(currentUserId)) {
+                    message.append("당신의 방 번호는 ").append(i + 1).append("번 방입니다.\n당신의 룸메이트는: ");
+                    for (UserScore roommate : room) {
+                        if (!roommate.getUserId().equals(currentUserId)) { // 본인을 제외하고 룸메이트 출력
+                            message.append(roommate.getName()).append(", ");
+                        }
+                    }
+                    // 마지막 쉼표 제거
+                        message.setLength(message.length() - 2); // 마지막 쉼표와 공백 제거
+
+                    message.append("입니다.");
+                    message.append("\n");
+                    break;  // 사용자가 속한 방을 찾았으니 루프 중단
+                }
             }
-            // 마지막 쉼표 제거
-            message.setLength(message.length() - 2);
-            message.append("\n");
+        }
+
+        // 사용자가 배정된 방이 없는 경우
+        if (message.length() == 0) {
+            message.append("당신은 아직 방에 배정되지 않았습니다.");
         }
 
         // 결과 알림창 띄우기
